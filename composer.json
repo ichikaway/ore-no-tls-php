@@ -2,7 +2,9 @@
     "name": "ichikaway/ore-no-tls-php",
     "description": "ore-no-tls.php",
     "require": {
-        "php": "^8.3"
+        "php": "^8.3",
+        "ext-openssl": "*",
+        "ext-sockets": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "^11.0"
