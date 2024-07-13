@@ -1,0 +1,38 @@
+services:
+  php-tls:
+    build:
+      context: ./
+    volumes:
+      - ./:/tls
+    working_dir: /tls
+
+      #  php-tls-dump:
+      #    build:
+      #      context: ./
+      #    volumes:
+      #      - ./:/tls
+      #    working_dir: /tls
+      #    command: php src/client.php
+      #      #command: php sample/client-curl.php
+      #    network_mode: host
+      #    depends_on:
+      #      tcpdump:
+      #        condition: service_healthy
+      #    
+      #  tcpdump:
+      #    image: nicolaka/netshoot:latest
+      #      #command: ["tcpdump", "-i", "eth0", "-w", "/dump/dump.pcap"]
+      #      #command: ["tcpdump", "-i", "eth0", "port", "443", "-s", "0", "-A", "-x", "'tcp[tcpflags] & (tcp-syn|tcp-ack) != 0'"]
+      #    command: tcpdump -i eth0 port 443 -s 0 -X -w /dump/dump.pcap 
+      #    cap_add:
+      #      - NET_ADMIN
+      #      - NET_RAW
+      #    network_mode: host
+      #    volumes:
+      #      - ./dumps:/dump
+      #    healthcheck:
+      #      test: ["CMD-SHELL", "pgrep tcpdump || exit 1"]
+      #      interval: 2s
+      #      timeout: 2s
+      #      retries: 3 
+
