@@ -61,10 +61,22 @@ class ServerCertificate
         return $key;
     }
 
+    /**
+     * バイナリデータを渡すと、サーバから取得済みの公開鍵で暗号化し、その結果をバイナリで返す
+     * 引数にhexデータを渡すと例外を出す
+     *
+     * @param string $data binary
+     * @return string
+     * @throws \Exception
+     */
     public function encryptWithPubKey(string $data): string
     {
         $encrypted_data = '';
         $openSSLAsymmetricKey = $this->getServerPubKeyFromCert();
+
+        if (ctype_xdigit($data)) {
+            throw new \Exception('forbid hex data.');
+        }
 
         $result =  openssl_public_encrypt(
             $data,

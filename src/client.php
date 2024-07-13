@@ -2,6 +2,7 @@
 namespace PHPTLS;
 
 use PHPTLS\Tls\Client\ClientHello;
+use PHPTLS\Tls\Client\ClientKeyExchange;
 use PHPTLS\Tls\Client\ParseServerHello;
 
 require 'vendor/autoload.php';
@@ -42,10 +43,15 @@ $response = socket_read($socket, 8000);
 
 $recvServerHello = new ParseServerHello(bin2hex($response));
 
-$serverCert = $recvServerHello->certificate->getServerPubKeyFromCert();
-$keyData = openssl_pkey_get_details($serverCert);
+//$serverCert = $recvServerHello->certificate->getServerPubKeyFromCert();
+//$keyData = openssl_pkey_get_details($serverCert);
+// var_dump($keyData['key']);
 
-var_dump($keyData['key']);
+// Client Key Exchangeデータを送信
+$ClientKeyExchange = new ClientKeyExchange($recvServerHello->certificate);
+$clientKeyExchangeData = hex2bin($ClientKeyExchange->createClientKeyExchangeDataHex());
+socket_write($socket, $clientKeyExchangeData, strlen($clientKeyExchangeData));
+
 
 // ソケットを閉じる
 socket_close($socket);
