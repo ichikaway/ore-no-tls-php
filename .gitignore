@@ -3,3 +3,4 @@
 dumps/
 vendor/
 composer.lock
+src/sample/
