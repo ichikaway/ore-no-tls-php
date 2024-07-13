@@ -1,6 +1,6 @@
 {
-    "name": "ichikaway/php-tls",
-    "description": "php-tls",
+    "name": "ichikaway/ore-no-tls-php",
+    "description": "ore-no-tls.php",
     "require": {
         "php": "^8.3"
     },
