@@ -39,7 +39,8 @@ class ServerCertificateTest extends TestCase
         $data = 'hello';
         $ServerCertificate = new ServerCertificate($this->getTestDataString());
         try {
-            $ServerCertificate->encryptWithPubKey($data);
+            $result = $ServerCertificate->encryptWithPubKey($data);
+            $this->assertNotEmpty($result);
         } catch (\Exception $e) {
             $this->assertTrue(false, $e->getMessage());
         }
