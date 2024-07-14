@@ -14,7 +14,7 @@ class ClientHello
     {
         $clientHello =
             '16' .  // Content Type: Handshake
-            '0301' .  // Version: TLS 1.0
+            '0303' .  // Version: TLS 1.2
             Util::decToHexWithLen(77, 2) . //'004D' .  // Length 77 byte
             '01' .  // Handshake Type: ClientHello
             Util::decToHexWithLen(73, 3) . //'000049' .  // Length  73 byte
