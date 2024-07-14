@@ -1,6 +1,7 @@
 <?php
 namespace PHPTLS;
 
+use PHPTLS\Tls\Client\ChangeCipherSpec;
 use PHPTLS\Tls\Client\ClientHello;
 use PHPTLS\Tls\Client\ClientKeyExchange;
 use PHPTLS\Tls\Client\ParseServerHello;
@@ -51,6 +52,9 @@ $recvServerHello = new ParseServerHello(bin2hex($response));
 $ClientKeyExchange = new ClientKeyExchange($recvServerHello->certificate);
 $clientKeyExchangeData = hex2bin($ClientKeyExchange->createClientKeyExchangeDataHex());
 socket_write($socket, $clientKeyExchangeData, strlen($clientKeyExchangeData));
+
+$changeCipher = hex2bin(ChangeCipherSpec::createChangeCipherSpec());
+socket_write($socket, $changeCipher, strlen($changeCipher));
 
 
 // ソケットを閉じる
