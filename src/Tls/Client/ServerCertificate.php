@@ -15,6 +15,7 @@ class ServerCertificate
     /**
      * Certificatesの中にある最初の証明書をhexで返す
      * 最初の証明書が該当サーバの証明書、中間証明書はその後に続く
+     *
      * @return string
      */
     public function getPrimaryCert(): string
@@ -65,7 +66,7 @@ class ServerCertificate
      * バイナリデータを渡すと、サーバから取得済みの公開鍵で暗号化し、その結果をバイナリで返す
      * 引数にhexデータを渡すと例外を出す
      *
-     * @param string $data binary
+     * @param  string $data binary
      * @return string
      * @throws \Exception
      */

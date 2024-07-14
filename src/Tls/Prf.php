@@ -1,15 +1,16 @@
 <?php
 namespace PHPTLS\Tls;
 
-final class Prf {
+final class Prf
+{
 
     /**
      * マスターシークレットを作成
      *
-     * @param int $len
-     * @param string $secret bin
-     * @param string $clientRandom bin
-     * @param string $serverRandom bin
+     * @param  int    $len
+     * @param  string $secret       bin
+     * @param  string $clientRandom bin
+     * @param  string $serverRandom bin
      * @return string bin
      * @throws \Exception
      */
@@ -25,9 +26,9 @@ final class Prf {
     /**
      * HMAC作成
      *
-     * @param int $len
-     * @param string $secret  bin
-     * @param string $seed bin
+     * @param  int    $len
+     * @param  string $secret bin
+     * @param  string $seed   bin
      * @return string bin
      * @throws \Exception
      */

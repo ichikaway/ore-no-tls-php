@@ -4,7 +4,8 @@ namespace PHPTLS\Tls\Client;
 
 use PHPTLS\Tls\Util;
 
-class ParseServerHello {
+class ParseServerHello
+{
     /**
      * @var string
      */
@@ -33,7 +34,7 @@ class ParseServerHello {
      * ServerHello、Certificate、ServerHelloDoneのデータが一度に来るためそれを分ける
      * 各データはLengthの値があるため、それをもとにTLSパケット分だけデータを切り出していく
      *
-     * @param string $data
+     * @param  string $data
      * @return array
      */
     public function parse(): array
@@ -63,5 +64,4 @@ class ParseServerHello {
             'ServerHelloDone' => $serverHelloDoneHex,
         ];
     }
-
 }

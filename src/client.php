@@ -15,7 +15,7 @@ if ($argc < 2) {
 $hostIp = $argv[1];
 //echo "First argument: $firstArgument\n";
 
-#$host = '127.0.0.1';
+// $host = '127.0.0.1';
 $port = 443;
 
 
@@ -60,7 +60,3 @@ socket_write($socket, $clientKeyExchangeData . $changeCipher, strlen($clientKeyE
 
 // ソケットを閉じる
 socket_close($socket);
-
-
-
-?>

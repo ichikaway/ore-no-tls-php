@@ -17,7 +17,4 @@ class PrfTest extends TestCase
         $result = Prf::createMasterSecret($len, hex2bin($secret), $label, hex2bin($clientRandom), hex2bin($serverRandom));
         $this->assertEquals($len, strlen($result));
     }
-
 }
-
-?>

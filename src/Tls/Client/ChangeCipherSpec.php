@@ -2,7 +2,6 @@
 
 namespace PHPTLS\Tls\Client;
 
-
 class ChangeCipherSpec
 {
     private static string $versionHex = '0303'; //TLS1.2

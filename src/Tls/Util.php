@@ -1,15 +1,16 @@
 <?php
 namespace PHPTLS\Tls;
 
-final class Util {
+final class Util
+{
 
     /**
      * 16進数のデータから指定のオフセットと長さでデータを切り出す
      * 指定バイト目からlengthバイト分の値を取得する（インデックスは0から始まる)
      *
-     * @param string $hexString
-     * @param int $offset
-     * @param int $length
+     * @param  string $hexString
+     * @param  int    $offset
+     * @param  int    $length
      * @return string 16進数
      */
     static function getHexDataWithLen(string $hexString, int $offset, int $length): string
@@ -23,8 +24,9 @@ final class Util {
     /**
      * 10進数の数字を与えると16進数で返す。byteLengthで指定した桁数でパディングする。
      * 例えば decimal=77, byteLength=2 を入れると '004D' が返る
-     * @param int $decimal
-     * @param int $byteLength
+     *
+     * @param  int $decimal
+     * @param  int $byteLength
      * @return string
      */
     static function decToHexWithLen(int $decimal, int $byteLength): string
@@ -38,7 +40,7 @@ final class Util {
     /**
      * x.509のhexデータを渡すとPEM形式の文字列で返す
      *
-     * @param string $hexString
+     * @param  string $hexString
      * @return string
      */
     static function hexToPem(string $hexString): string

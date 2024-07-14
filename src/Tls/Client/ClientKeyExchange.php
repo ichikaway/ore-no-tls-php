@@ -24,6 +24,7 @@ class ClientKeyExchange
 
     /**
      * pre master secretを生成して返す。 hex
+     *
      * @return string hex
      * @throws \Exception
      */

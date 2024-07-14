@@ -31,7 +31,7 @@ class ServerCertificateTest extends TestCase
         $ServerCertificate = new ServerCertificate($this->getTestDataString());
         /** @var \OpenSSLAsymmetricKey $result */
         $result = $ServerCertificate->getServerPubKeyFromCert();
-        $this->assertTrue( $result instanceOf \OpenSSLAsymmetricKey);
+        $this->assertTrue($result instanceof \OpenSSLAsymmetricKey);
     }
 
     public function test_getEncryptData()
@@ -45,7 +45,4 @@ class ServerCertificateTest extends TestCase
             $this->assertTrue(false, $e->getMessage());
         }
     }
-
 }
-
-?>

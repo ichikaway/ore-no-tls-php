@@ -32,7 +32,4 @@ class ClientKeyExchangeTest extends TestCase
         $clientKeyExchangeHex = $ClientKeyExchange->createClientKeyExchangeDataHex();
         $this->assertEquals(530, strlen($clientKeyExchangeHex)); //RSAの暗号を使うとペイロード全体がHexで530バイトになる
     }
-
 }
-
-?>

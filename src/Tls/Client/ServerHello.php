@@ -21,6 +21,7 @@ class ServerHello
 
     /**
      * 32バイトのServerHelloランダムの値をHexで返す
+     *
      * @return string hex
      */
     public function getServerRandomHex(): string

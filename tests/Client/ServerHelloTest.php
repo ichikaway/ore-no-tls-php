@@ -25,8 +25,4 @@ class ServerHelloTest extends TestCase
         $result = $ServerHello->getServerRandomHex();
         $this->assertEquals($expect, $result);
     }
-
-
 }
-
-?>

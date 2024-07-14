@@ -35,8 +35,4 @@ class ParseServerHelloTest extends TestCase
         $expectedValue = "16030300040e000000";
         $this->assertEquals($expectedValue, $results['ServerHelloDone']);
     }
-
-
 }
-
-?>
