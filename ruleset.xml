@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<ruleset name="ore-no-tls-php">
+    <file>./src</file>
+    <file>./tests</file>
+    <rule ref="PSR2">
+        <!-- 1行あたりの文字数制限をチェックしない -->
+        <exclude name="Generic.Files.LineLength"/>
+    </rule>
+</ruleset>
