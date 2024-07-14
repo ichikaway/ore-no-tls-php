@@ -51,10 +51,11 @@ $recvServerHello = new ParseServerHello(bin2hex($response));
 // Client Key Exchangeデータを送信
 $ClientKeyExchange = new ClientKeyExchange($recvServerHello->certificate);
 $clientKeyExchangeData = hex2bin($ClientKeyExchange->createClientKeyExchangeDataHex());
-socket_write($socket, $clientKeyExchangeData, strlen($clientKeyExchangeData));
 
 $changeCipher = hex2bin(ChangeCipherSpec::createChangeCipherSpec());
-socket_write($socket, $changeCipher, strlen($changeCipher));
+
+socket_write($socket, $clientKeyExchangeData . $changeCipher, strlen($clientKeyExchangeData . $changeCipher));
+
 
 
 // ソケットを閉じる
