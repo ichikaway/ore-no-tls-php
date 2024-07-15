@@ -30,6 +30,10 @@ class ClientKeyExchangeTest extends TestCase
         $ServerCertificate = new ServerCertificate($this->getTestDataString());
         $ClientKeyExchange = new ClientKeyExchange($ServerCertificate);
         $clientKeyExchangeHex = $ClientKeyExchange->createClientKeyExchangeDataHex();
-        $this->assertEquals(530, strlen($clientKeyExchangeHex)); //RSAの暗号を使うとペイロード全体がHexで530バイトになる
+        //RSAの暗号を使うとペイロード全体がHexで530バイトになる
+        // RSA暗号化したバイナリデータが256バイト、それにhandshake exchangeのtype(1byte)+len(3byte), SSLヘッダのType(1byte)+Version(2byte0+len(2byte)
+        // 合計256 + 9 = 265byte
+        // それをhexの文字列にするため2枚して530byteとなる
+        $this->assertEquals(530, strlen($clientKeyExchangeHex));
     }
 }
