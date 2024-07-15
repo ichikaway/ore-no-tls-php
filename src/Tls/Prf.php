@@ -18,6 +18,7 @@ final class Prf
         if (ctype_xdigit($clientRandom) || ctype_xdigit($serverRandom) || ctype_xdigit($secret)) {
             throw new \Exception('Forbid hex data in createHash()');
         }
+        // RFC5246 8.1. Computing the Master Secret 参照
         $seed = 'master secret' . $clientRandom . $serverRandom;
         $len = 48; //master secretを作る時は48byte固定
         return self::pHash($len, $secret, $seed);
@@ -35,6 +36,7 @@ final class Prf
         if (ctype_xdigit($clientRandom) || ctype_xdigit($serverRandom) || ctype_xdigit($secret)) {
             throw new \Exception('Forbid hex data in createHash()');
         }
+        // RFC5246 8.1. 6.3. Key Calculation 参照
         $seed = 'key expansion' . $serverRandom. $clientRandom; //key expansionはserver random, client randomの順に繋げる
         $len = 40; //key blockは40byte固定
         $hashed = self::pHash($len, $secret, $seed);
