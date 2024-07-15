@@ -7,21 +7,22 @@ final class Prf
     /**
      * マスターシークレットを作成
      *
-     * @param  int    $len
      * @param  string $secret       bin
      * @param  string $clientRandom bin
      * @param  string $serverRandom bin
      * @return string bin
      * @throws \Exception
      */
-    public static function createMasterSecret(int $len, string $secret, string $clientRandom, string $serverRandom): string
+    public static function createMasterSecret(string $secret, string $clientRandom, string $serverRandom): string
     {
         if (ctype_xdigit($clientRandom) || ctype_xdigit($serverRandom) || ctype_xdigit($secret)) {
             throw new \Exception('Forbid hex data in createHash()');
         }
         $seed = 'master secret' . $clientRandom . $serverRandom;
+        $len = 48; //master secretを作る時は48byte固定
         return self::pHash($len, $secret, $seed);
     }
+
 
     /**
      * HMAC作成
