@@ -4,6 +4,8 @@ namespace PHPTLS;
 use PHPTLS\Tls\Client\ChangeCipherSpec;
 use PHPTLS\Tls\Client\ClientHello;
 use PHPTLS\Tls\Client\ClientKeyExchange;
+use PHPTLS\Tls\Client\FinishedMessage;
+use PHPTLS\Tls\Client\MasterSecret;
 use PHPTLS\Tls\Client\ParseServerHello;
 
 require 'vendor/autoload.php';
@@ -48,13 +50,34 @@ $recvServerHello = new ParseServerHello(bin2hex($response));
 //$keyData = openssl_pkey_get_details($serverCert);
 // var_dump($keyData['key']);
 
-// Client Key Exchangeデータを送信
+// Client Key Exchangeデータ作成
 $ClientKeyExchange = new ClientKeyExchange($recvServerHello->certificate);
 $clientKeyExchangeData = hex2bin($ClientKeyExchange->createClientKeyExchangeDataHex());
 
+// ClientCipherSpecデータ作成
 $changeCipher = hex2bin(ChangeCipherSpec::createChangeCipherSpec());
 
-socket_write($socket, $clientKeyExchangeData . $changeCipher, strlen($clientKeyExchangeData . $changeCipher));
+// Finishedデータ作成
+$clientRandom = hex2bin($ClientHelloObj->getClientHelloRandomHex());
+$serverRandom = hex2bin($recvServerHello->serverHello->getServerRandomHex());
+$MasterSecret = new MasterSecret($clientRandom, $serverRandom);
+$FinishedObj = new FinishedMessage(
+    $MasterSecret,
+    $ClientHelloObj->getTlsPayload(),
+    $recvServerHello->serverHello->getTlsPayload(),
+    $recvServerHello->certificate->getTlsPayload(),
+    $ClientKeyExchange->getTlsPayload()
+);
+$FinishedObj->createHandshakeMessage();
+//var_dump($FinishedObj);
+$finishedMessage = '';
+
+//Client key exchange, Change cipher spec, Finishedのデータを一つにまとめて送信
+socket_write(
+    $socket,
+    $clientKeyExchangeData . $changeCipher. $finishedMessage,
+    strlen($clientKeyExchangeData . $changeCipher . $finishedMessage)
+);
 
 
 
