@@ -45,8 +45,8 @@ class ClientHello
         return $data;
     }
 
-    public function getClientHelloRandomHex(): string
+    public function getClientHelloRandom(): string
     {
-        return $this->clientRandomHex;
+        return hex2bin($this->clientRandomHex);
     }
 }

@@ -27,10 +27,10 @@ class ServerHello
      *
      * @return string hex
      */
-    public function getServerRandomHex(): string
+    public function getServerRandom(): string
     {
         $offset = self::RecordHeaderOffsetOfContentTypeAndTlsVerAndLen + self::PayloadLengthOfHandshaketypeAndLengthAndVersion;
         $randomByte = 32;
-        return Util::getHexDataWithLen($this->dataHex, $offset, $randomByte);
+        return hex2bin(Util::getHexDataWithLen($this->dataHex, $offset, $randomByte));
     }
 }

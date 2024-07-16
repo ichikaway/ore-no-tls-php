@@ -59,8 +59,8 @@ $changeCipher = hex2bin(ChangeCipherSpec::createChangeCipherSpec());
 
 // Finishedデータ作成
 $preMasterSecret = $ClientKeyExchange->getPreMasterSecret();
-$clientRandom = hex2bin($ClientHelloObj->getClientHelloRandomHex());
-$serverRandom = hex2bin($recvServerHello->serverHello->getServerRandomHex());
+$clientRandom = $ClientHelloObj->getClientHelloRandom();
+$serverRandom = $recvServerHello->serverHello->getServerRandom();
 $MasterSecret = new MasterSecret($preMasterSecret, $clientRandom, $serverRandom);
 $FinishedObj = new FinishedMessage(
     $MasterSecret,

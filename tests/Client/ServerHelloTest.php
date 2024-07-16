@@ -22,7 +22,7 @@ class ServerHelloTest extends TestCase
             '7ecc0fd1309b8c9aafd884f4a4559155';
 
         $ServerHello = new ServerHello($this->getTestDataString());
-        $result = $ServerHello->getServerRandomHex();
-        $this->assertEquals($expect, $result);
+        $result = $ServerHello->getServerRandom();
+        $this->assertEquals($expect, bin2hex($result));
     }
 }
