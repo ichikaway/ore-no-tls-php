@@ -6,10 +6,14 @@ use PHPTLS\Tls\Util;
 
 class ServerCertificate
 {
+    use TlsMessageTrait;
+
     private readonly string $data; //hex
+
     public function __construct(string $data)
     {
         $this->data = $data;
+        $this->dataHex = $data;
     }
 
     /**

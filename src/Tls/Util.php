@@ -17,7 +17,6 @@ final class Util
     {
         $offset *= 2; // バイト目（16進数は1バイトが2文字なので2を掛ける）
         $length *= 2; // バイト分（16進数は1バイトが2文字なので2を掛ける）
-
         return substr($hexString, $offset, $length);
     }
 

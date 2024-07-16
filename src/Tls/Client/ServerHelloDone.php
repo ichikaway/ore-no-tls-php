@@ -4,9 +4,10 @@ namespace PHPTLS\Tls\Client;
 
 class ServerHelloDone
 {
-    private readonly string $data; //hex
+    use TlsMessageTrait;
+
     public function __construct(string $data)
     {
-        $this->data = $data;
+        $this->dataHex = $data;
     }
 }

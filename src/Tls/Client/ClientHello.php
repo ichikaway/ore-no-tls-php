@@ -6,7 +6,7 @@ use PHPTLS\Tls\Util;
 
 class ClientHello
 {
-    private string $clientHelloHexData;
+    use TlsMessageTrait;
 
     private string $clientRandomHex;
 
@@ -28,7 +28,7 @@ class ClientHello
             '01' .  // Compression Methods Length
             '00'  // Compression Method: null
         ;
-        $this->clientHelloHexData = $clientHello;
+        $this->dataHex = $clientHello;
         return hex2bin($clientHello);
     }
 
@@ -48,10 +48,5 @@ class ClientHello
     public function getClientHelloRandomHex(): string
     {
         return $this->clientRandomHex;
-    }
-
-    public function getClientHelloHexData(): string
-    {
-        return $this->clientHelloHexData;
     }
 }

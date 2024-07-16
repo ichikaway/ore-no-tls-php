@@ -6,13 +6,12 @@ use PHPTLS\Tls\Util;
 
 class ClientKeyExchange
 {
+    use TlsMessageTrait;
+
     private string $versionHex = '0303'; //TLS1.2
     private string $secretRandomHex = '01010101010101010101020202020202020202020303030303030303030304040404040404040404050505050505'; //46byte
 
     private ServerCertificate $serverCertificate;
-
-    // ClientKeyExchangeで送信するデータ(hex)
-    private string $clientKeyExchangeHex;
 
     // pre master secret(暗号化済み)のデータ(hex)
     private string $preMasterSecretHex;
@@ -58,7 +57,7 @@ class ClientKeyExchange
             Util::decToHexWithLen($lengthOfHandShakeExchange, 2) .
             $handShakeExchange
         ;
-        $this->clientKeyExchangeHex = $clientKeyExchange;
+        $this->dataHex = $clientKeyExchange;
         return $clientKeyExchange;
     }
 }
