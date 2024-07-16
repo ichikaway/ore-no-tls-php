@@ -34,6 +34,11 @@ class ClientKeyExchange
         return $this->preMasterSecretHex;
     }
 
+    public function getPreMasterSecret()
+    {
+        return hex2bin($this->preMasterSecretHex);
+    }
+
     /**
      * Client Key Exchange のペイロードを作成する(hex)
      *

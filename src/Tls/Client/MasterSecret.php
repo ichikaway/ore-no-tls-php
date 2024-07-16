@@ -13,11 +13,12 @@ class MasterSecret
     private string $masterSecretBin;
     private array $keyBlock;
 
-    public function __construct(string $clientRandomBin, string $serverRandomBin)
+    public function __construct(string $preMasterSecretBin, string $clientRandomBin, string $serverRandomBin)
     {
         if (ctype_xdigit($clientRandomBin) || ctype_xdigit($serverRandomBin)) {
             throw new \InvalidArgumentException('Invalid Client/Server Random. hex data provided.');
         }
+        $this->preMasterSecretBin = $preMasterSecretBin;
         $this->clientRandomBin = $clientRandomBin;
         $this->serverRandomBin = $serverRandomBin;
         $this->createMasterSecret();
@@ -35,14 +36,6 @@ class MasterSecret
 
     public function createMasterSecret()
     {
-        $secret = $this->createPreMasterSecretBin();
-        $this->masterSecretBin = Prf::createMasterSecret($secret, $this->clientRandomBin, $this->serverRandomBin);
-    }
-
-    private function createPreMasterSecretBin(): string
-    {
-        $data = '010101010101010101010202020202020202020203030303030303030303040404040404040404040505050505050505';   // Random 48byte (本来はランダムデータを入れる)
-        $this->preMasterSecretBin = hex2bin($data);
-        return $this->preMasterSecretBin;
+        $this->masterSecretBin = Prf::createMasterSecret($this->preMasterSecretBin, $this->clientRandomBin, $this->serverRandomBin);
     }
 }
