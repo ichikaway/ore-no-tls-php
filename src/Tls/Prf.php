@@ -51,6 +51,14 @@ final class Prf
     /**
      * HMAC作成
      *
+     * seed = "master secret" + client_random + server_random
+     * a0 = seed
+     * a1 = HMAC-SHA256(key=PreMasterSecret, data=a0)
+     * a2 = HMAC-SHA256(key=PreMasterSecret, data=a1)
+     * p1 = HMAC-SHA256(key=PreMasterSecret, data=a1 + seed)
+     * p2 = HMAC-SHA256(key=PreMasterSecret, data=a2 + seed)
+     * MasterSecret = p1[all 32 bytes] + p2[first 16 bytes]
+     *
      * @param  int    $len
      * @param  string $secret bin
      * @param  string $seed   bin
@@ -62,10 +70,22 @@ final class Prf
         if (ctype_xdigit($seed)  || ctype_xdigit($secret)) {
             throw new \Exception('Forbid hex data in createHash()');
         }
-        $hashed = hash_hkdf('sha256', $secret, $len, 'sha56', $seed);
-        if ($hashed === false) {
-            throw new \Exception('can not create hmac.');
+        //hash_hkdfはhmac 256とは異なる値を出力するため利用しない
+        //$hashed = hash_hkdf('sha256', $secret, $len, 'sha256', $seed);
+
+        // P_hash(secret, seed) = HMAC_hash(secret, A(1) + seed) + HMAC_hash(secret, A(2) + seed) + HMAC_hash(secret, A(3) + seed) + ..
+        $a = hash_hmac('sha256', $seed, $secret, true);
+        $result = '';
+        while (strlen($result) < $len) {
+            $hashed = hash_hmac('sha256', $a . $seed, $secret, true);
+            if ($hashed === false) {
+                throw new \Exception('can not create hmac.');
+            }
+            $result .= $hashed;
+            //次のハッシュに利用する$aは、seedを入れないハッシュ値
+            $a = hash_hmac('sha256', $a, $secret, true);
         }
+        $hashed = substr($result, 0, $len);
         return $hashed;
     }
 }
