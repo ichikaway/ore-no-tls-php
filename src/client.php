@@ -64,11 +64,11 @@ $serverRandom = $recvServerHello->serverHello->getServerRandom();
 $MasterSecret = new MasterSecret($preMasterSecret, $clientRandom, $serverRandom);
 $FinishedObj = new FinishedMessage(
     $MasterSecret,
-    $ClientHelloObj->getMessageHashed(),
-    $recvServerHello->serverHello->getMessageHashed(),
-    $recvServerHello->certificate->getMessageHashed(),
-    $recvServerHello->serverHelloDone->getMessageHashed(),
-    $ClientKeyExchange->getMessageHashed()
+    $ClientHelloObj->getTlsPayload(),
+    $recvServerHello->serverHello->getTlsPayload(),
+    $recvServerHello->certificate->getTlsPayload(),
+    $recvServerHello->serverHelloDone->getTlsPayload(),
+    $ClientKeyExchange->getTlsPayload()
 );
 
 //Todo

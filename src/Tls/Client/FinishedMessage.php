@@ -61,7 +61,7 @@ class FinishedMessage
         $label = 'client finished';
         $handshakeMessages = $this->clientHello . $this->serverHello .
             $this->certificate . $this->serverHelloDone . $this->clientKeyExchange;
-        $seed = $label . $handshakeMessages;
+        $seed = $label . hash('sha256', $handshakeMessages, true);
         $len = 12; //12byte
         return Prf::pHash($len, $masterSecret, $seed);
     }

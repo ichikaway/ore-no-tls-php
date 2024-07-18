@@ -10,7 +10,7 @@ trait TlsMessageTrait
     /**
      * レコードヘッダを除いたTLSメッセージを抽出する
      *
-     * @return string hex
+     * @return string bin
      */
     public function getTlsPayload(): string
     {
@@ -23,19 +23,6 @@ trait TlsMessageTrait
         $data = $this->dataHex;
         $offset = 5; //TLSレコードヘッダはtype(1byte), version(2byte), length(2byte)の合計5バイト
         $len = strlen(hex2bin($data)) - $offset;
-        return Util::getHexDataWithLen($data, $offset, $len); //レコードヘッダを除いたデータを切り出し
-    }
-
-    /**
-     * ハンドシェイクメッセージ本文をsha256でハッシュしたbinaryを返す
-     * Finishedメッセージ用
-     *
-     * @return string bin
-     * @throws \Exception
-     */
-    public function getMessageHashed(): string
-    {
-        $data = hex2bin($this->getTlsPayload());
-        return hash('sha256', $data, true);
+        return hex2bin(Util::getHexDataWithLen($data, $offset, $len)); //レコードヘッダを除いたデータを切り出し
     }
 }
