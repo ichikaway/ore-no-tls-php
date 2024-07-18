@@ -21,7 +21,7 @@ class ClientKeyExchangeTest extends TestCase
     {
         $ServerCertificate = new ServerCertificate($this->getTestDataString());
         $ClientKeyExchange = new ClientKeyExchange($ServerCertificate);
-        $result = $ClientKeyExchange->createPreMasterSecretHex();
+        $result = $ClientKeyExchange->createPreMasterSecret();
         $this->assertNotEmpty($result);
     }
 

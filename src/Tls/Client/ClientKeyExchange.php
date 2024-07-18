@@ -13,8 +13,8 @@ class ClientKeyExchange
 
     private ServerCertificate $serverCertificate;
 
-    // pre master secret(暗号化済み)のデータ(hex)
-    private string $preMasterSecretHex;
+    // pre master secret(暗号化済み)のデータ(bin)
+    private string $preMasterSecret;
 
     public function __construct(ServerCertificate $serverCertificate)
     {
@@ -22,21 +22,21 @@ class ClientKeyExchange
     }
 
     /**
-     * pre master secretを生成して返す。 hex
+     * pre master secretを生成して返す。
      *
-     * @return string hex
+     * @return string  bin
      * @throws \Exception
      */
-    public function createPreMasterSecretHex(): string
+    public function createPreMasterSecret(): string
     {
         $secret = hex2bin($this->versionHex . $this->secretRandomHex);
-        $this->preMasterSecretHex = bin2hex($this->serverCertificate->encryptWithPubKey($secret));
-        return $this->preMasterSecretHex;
+        $this->preMasterSecret = $this->serverCertificate->encryptWithPubKey($secret);
+        return $this->preMasterSecret;
     }
 
     public function getPreMasterSecret()
     {
-        return hex2bin($this->preMasterSecretHex);
+        return $this->preMasterSecret;
     }
 
     /**
@@ -47,12 +47,12 @@ class ClientKeyExchange
      */
     public function createClientKeyExchangeDataHex(): string
     {
-        $preMasterSecretHex = $this->createPreMasterSecretHex();
-        $lengthOfPreMasterSecret = strlen(hex2bin($preMasterSecretHex));
+        $preMasterSecret = $this->createPreMasterSecret();
+        $lengthOfPreMasterSecret = strlen($preMasterSecret);
         $handShakeExchange =
             '10' . //Content Type : Client Key Exchange
             Util::decToHexWithLen($lengthOfPreMasterSecret, 3) .
-            $preMasterSecretHex;
+            bin2hex($preMasterSecret);
 
         $lengthOfHandShakeExchange = strlen(hex2bin($handShakeExchange));
 
