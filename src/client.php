@@ -67,19 +67,25 @@ $FinishedObj = new FinishedMessage(
     $ClientHelloObj->getTlsPayload(),
     $recvServerHello->serverHello->getTlsPayload(),
     $recvServerHello->certificate->getTlsPayload(),
+    $recvServerHello->serverHelloDone->getTlsPayload(),
     $ClientKeyExchange->getTlsPayload()
 );
-$FinishedObj->createHandshakeMessage();
-//var_dump($FinishedObj);
-$finishedMessage = '';
+
+//Todo
+//handshake messageを暗号化してfinishメッセージの形式にする
+$finishedMessage = $FinishedObj->createHandshakeMessage();
 
 //Client key exchange, Change cipher spec, Finishedのデータを一つにまとめて送信
+$sendData = $clientKeyExchangeData . $changeCipher. $finishedMessage;
 socket_write(
     $socket,
-    $clientKeyExchangeData . $changeCipher. $finishedMessage,
-    strlen($clientKeyExchangeData . $changeCipher . $finishedMessage)
+    $sendData,
+    strlen($sendData)
 );
 
+
+$response = socket_read($socket, 16000);
+var_dump(bin2hex($response));
 
 
 // ソケットを閉じる
