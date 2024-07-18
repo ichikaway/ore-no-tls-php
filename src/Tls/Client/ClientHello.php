@@ -12,12 +12,10 @@ class ClientHello
 
     public function createClientHello(): string
     {
+
         $clientHello =
-            '16' .  // Content Type: Handshake
-            '0303' .  // Version: TLS 1.2
-            Util::decToHexWithLen(77, 2) . //'004D' .  // Length 77 byte
             '01' .  // Handshake Type: ClientHello
-            Util::decToHexWithLen(73, 3) . //'000049' .  // Length  73 byte
+            Util::decToHexWithLen(41, 3) .
             '0303' .  // Version: TLS 1.2
             $this->createRandomByteHex() .  // Random 32byte
             '00' .  // Session ID Length
@@ -28,8 +26,17 @@ class ClientHello
             '01' .  // Compression Methods Length
             '00'  // Compression Method: null
         ;
-        $this->dataHex = $clientHello;
-        return hex2bin($clientHello);
+        $len = strlen(hex2bin($clientHello));
+
+        $clientHelloAll =
+            '16' .  // Content Type: Handshake
+            '0303' .  // Version: TLS 1.2
+            Util::decToHexWithLen($len, 2) .
+            $clientHello
+            ;
+        $this->dataHex = $clientHelloAll;
+
+        return hex2bin($clientHelloAll);
     }
 
     private function createRandomByteHex(): string
