@@ -43,12 +43,19 @@ class FinishedMessage
 
     public function createHandshakeMessage(): string
     {
+        // verify dataは長さ12バイトのため、lengthは 00000c 固定
         //14 - handshake message type 0x14 (finished)
         //00 00 0c - 0xC (12) bytes of handshake finished follows
-        $header = hex2bin('160303' . '10' .'14' . '00000c');
-        //$header = hex2bin('14' . '00000c');
+        $header = hex2bin('14' . '00000c');
         $this->handshakeMessage = $header . $this->createVerifyData();
-        return $this->handshakeMessage;
+
+        //todo
+        // handshameMessageを暗号化
+        // 暗号化したデータのLengthを取得
+        // レコードヘッダーを作って暗号化したデータを入れる
+        $data = null;
+        //$data = hex2bin('160303' . $len . $encrypt);
+        return $data;
     }
 
     /**
