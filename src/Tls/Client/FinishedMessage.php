@@ -18,41 +18,42 @@ class FinishedMessage
 
     /**
      * @param MasterSecret $MasterSecret
-     * @param string $clientHelloHex
-     * @param string $serverHelloHex
-     * @param string $certificateHex
-     * @param string $serverHelloDoneHex
-     * @param string $clientKeyExchangeHex
+     * @param string $clientHello
+     * @param string $serverHello
+     * @param string $certificate
+     * @param string $serverHelloDone
+     * @param string $clientKeyExchange
      */
     public function __construct(
         MasterSecret $MasterSecret,
-        string $clientHelloHex,
-        string $serverHelloHex,
-        string $certificateHex,
-        string $serverHelloDoneHex,
-        string $clientKeyExchangeHex
+        string $clientHello,
+        string $serverHello,
+        string $certificate,
+        string $serverHelloDone,
+        string $clientKeyExchange
     ) {
-        $this->MasterSecret = $MasterSecret;
-        $this->clientHello = hex2bin($clientHelloHex);
-        $this->serverHello = hex2bin($serverHelloHex);
-        $this->certificate = hex2bin($certificateHex);
-        $this->serverHelloDone = hex2bin($serverHelloDoneHex);
-        $this->clientKeyExchange = hex2bin($clientKeyExchangeHex);
+        $this->MasterSecret      = $MasterSecret;
+        $this->clientHello       = $clientHello;
+        $this->serverHello       = $serverHello;
+        $this->certificate       = $certificate;
+        $this->serverHelloDone   = $serverHelloDone;
+        $this->clientKeyExchange = $clientKeyExchange;
     }
+
 
     public function createHandshakeMessage(): string
     {
         //14 - handshake message type 0x14 (finished)
         //00 00 0c - 0xC (12) bytes of handshake finished follows
-        //$header = hex2bin('160303' . '10' .'14' . '00000c');
-        $header = hex2bin('14' . '00000c');
+        $header = hex2bin('160303' . '10' .'14' . '00000c');
+        //$header = hex2bin('14' . '00000c');
         $this->handshakeMessage = $header . $this->createVerifyData();
         return $this->handshakeMessage;
     }
 
     /**
      * これまでやり取りしたHandshakeメッセージ(ClientHello, ServerHello, Certificate, ServerHelloDone, ClientKeyExchange)
-     * を渡して12byteのverify_dataを作成
+     * をsha256でハッシュしたバイナリデータを渡して12byteのverify_dataを作成
      */
     public function createVerifyData(): string
     {

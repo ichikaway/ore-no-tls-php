@@ -25,4 +25,17 @@ trait TlsMessageTrait
         $len = strlen(hex2bin($data)) - $offset;
         return Util::getHexDataWithLen($data, $offset, $len); //レコードヘッダを除いたデータを切り出し
     }
+
+    /**
+     * ハンドシェイクメッセージ本文をsha256でハッシュしたbinaryを返す
+     * Finishedメッセージ用
+     *
+     * @return string bin
+     * @throws \Exception
+     */
+    public function getMessageHashed(): string
+    {
+        $data = hex2bin($this->getTlsPayload());
+        return hash('sha256', $data, true);
+    }
 }
