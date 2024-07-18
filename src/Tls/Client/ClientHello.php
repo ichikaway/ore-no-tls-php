@@ -20,8 +20,8 @@ class ClientHello
             Util::decToHexWithLen(73, 3) . //'000049' .  // Length  73 byte
             '0303' .  // Version: TLS 1.2
             $this->createRandomByteHex() .  // Random 32byte
-            '20' .  // Session ID Length
-            $this->createSessionByteHex() .  // SessionID 32byte
+            '00' .  // Session ID Length
+            //$this->createSessionByteHex() .  // SessionID 32byte
             '0002' .  // Cipher Suites Length
             //'1301' .  // Cipher Suites (AES_128_GCM_SHA256)
             '009c' .  // Cipher Suites (RSA_WITH_AES_128_GCM_SHA256

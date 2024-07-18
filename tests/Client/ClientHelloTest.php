@@ -10,7 +10,7 @@ class ClientHelloTest extends TestCase
 
     public function test_createClientHello()
     {
-        $expect = "160303004d01000049030301010101010101010101020202020202020202020303030303030303030304042002010101010101010101020202020202020202020303030303030303030304040002009c0100";
+        $expect = "160303004d0100004903030101010101010101010102020202020202020202030303030303030303030404000002009c0100";
         $ClientHello = new ClientHello();
         $result = $ClientHello->createClientHello();
         $this->assertEquals($expect, bin2hex($result));
@@ -19,7 +19,7 @@ class ClientHelloTest extends TestCase
     public function test_tlsMessageTrait()
     {
         //レコードヘッダを取り除いた値
-        $expect = "01000049030301010101010101010101020202020202020202020303030303030303030304042002010101010101010101020202020202020202020303030303030303030304040002009c0100";
+        $expect = "0100004903030101010101010101010102020202020202020202030303030303030303030404000002009c0100";
         $ClientHello = new ClientHello();
         $ClientHello->createClientHello();
         $this->assertEquals($expect, $ClientHello->getTlsPayload());
