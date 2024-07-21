@@ -57,12 +57,26 @@ class ClientKeyExchange
      */
     public function createClientKeyExchangeDataHex(): string
     {
-        $preMasterSecret = $this->createPreMasterSecret();
-        $lengthOfPreMasterSecret = strlen($preMasterSecret);
+        $encryptedPreMasterSecret = $this->createPreMasterSecret();
+        $lengthOfPreMasterSecret = strlen($encryptedPreMasterSecret);
+        /**
+         * Implementation note: Public-key-encrypted data is represented as an opaque
+         * vector <0..2^16-1> (see Section 4.7).
+         * Thus, the RSA-encrypted PreMasterSecret in a ClientKeyExchange is preceded by two length bytes.
+         * These bytes are redundant in the case of RSA because the EncryptedPreMasterSecret is the only data
+         * in the ClientKeyExchange and its length can therefore be unambiguously determined.
+         * The SSLv3 specification was not clear about the encoding of public-key-encrypted data,
+         * and therefore many SSLv3 implementations do not include the length bytes -- they encode
+         * the RSA-encrypted data directly in the ClientKeyExchange message
+         *
+         * 長さのデータは2つあるため注意
+         * content type(1byte) + length(3byte) + length(2byte) + encrypted data
+         */
         $handShakeExchange =
             '10' . //Content Type : Client Key Exchange
-            Util::decToHexWithLen($lengthOfPreMasterSecret, 3) .
-            bin2hex($preMasterSecret);
+            Util::decToHexWithLen($lengthOfPreMasterSecret + 2, 3) .
+            Util::decToHexWithLen($lengthOfPreMasterSecret, 2) .
+            bin2hex($encryptedPreMasterSecret);
 
         $lengthOfHandShakeExchange = strlen(hex2bin($handShakeExchange));
 
