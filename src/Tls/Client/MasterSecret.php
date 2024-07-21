@@ -42,6 +42,7 @@ class MasterSecret
     public function createKeyBlock()
     {
         $this->keyBlock = Prf::createKeyBlock($this->masterSecretBin, $this->clientRandomBin, $this->serverRandomBin);
+        //$this->keyBlock = Prf::createKeyBlockForCBC($this->masterSecretBin, $this->clientRandomBin, $this->serverRandomBin);
     }
 
     public function createMasterSecret()

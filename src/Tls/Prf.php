@@ -47,6 +47,24 @@ final class Prf
             "ServerWriteIV"  => substr($hashed, 36, 4),
         ];
     }
+    public static function createKeyBlockForCBC(string $secret, string $clientRandom, string $serverRandom): array
+    {
+        if (ctype_xdigit($clientRandom) || ctype_xdigit($serverRandom) || ctype_xdigit($secret)) {
+            throw new \Exception('Forbid hex data in createHash()');
+        }
+        // RFC5246 8.1. 6.3. Key Calculation 参照
+        $seed = 'key expansion' . $serverRandom. $clientRandom; //key expansionはserver random, client randomの順に繋げる
+        $len = 104; //key blockは48byte固定
+        $hashed = self::pHash($len, $secret, $seed);
+        return [
+            "ClientMac" => substr($hashed, 0, 20),
+            "ServerMac" => substr($hashed, 20, 20),
+            "ClientWriteKey" => substr($hashed, 40, 16),
+            "ServerWriteKey" => substr($hashed, 56, 16),
+            "ClientWriteIV"  => substr($hashed, 72, 16),
+            "ServerWriteIV"  => substr($hashed, 88, 16),
+        ];
+    }
 
     /**
      * HMAC作成

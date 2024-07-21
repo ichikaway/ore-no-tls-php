@@ -21,8 +21,9 @@ class ClientHello
             '00' .  // Session ID Length
             //$this->createSessionByteHex() .  // SessionID 32byte
             '0002' .  // Cipher Suites Length
-            //'1301' .  // Cipher Suites (AES_128_GCM_SHA256)
-            '009c' .  // Cipher Suites (RSA_WITH_AES_128_GCM_SHA256
+            '009c' .  // Cipher Suites (RSA_WITH_AES_128_GCM_SHA256 //golang tls
+            //'c013' . //0xC013 (TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) //Illustrate TLS1.2 site
+            //'0035' . //CipherSuite TLS_RSA_WITH_AES_256_CBC_SHA          = { 0x00,0x35 }; kanatoko-san
             '01' .  // Compression Methods Length
             '00'  // Compression Method: null
         ;
