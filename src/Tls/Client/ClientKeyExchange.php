@@ -24,16 +24,26 @@ class ClientKeyExchange
     /**
      * pre master secretを生成して返す。
      *
-     * @return string  bin
+     * @return string  bin 公開鍵で暗号化されたpre master secretのバイナリ
      * @throws \Exception
      */
     public function createPreMasterSecret(): string
     {
-        $secret = hex2bin($this->versionHex . $this->secretRandomHex);
-        $this->preMasterSecret = $this->serverCertificate->encryptWithPubKey($secret);
-        return $this->preMasterSecret;
+        /**
+         * struct {
+         * ProtocolVersion client_version;
+         * opaque random[46];
+         * } PreMasterSecret;
+         */
+        $this->secretRandomHex = bin2hex(openssl_random_pseudo_bytes(46));
+        $this->preMasterSecret = hex2bin($this->versionHex . $this->secretRandomHex);
+        $encryptedSecret = $this->serverCertificate->encryptWithPubKey($this->preMasterSecret);
+        return $encryptedSecret;
     }
 
+    /**
+     * @return string bin
+     */
     public function getPreMasterSecret()
     {
         return $this->preMasterSecret;
