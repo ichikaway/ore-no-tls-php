@@ -82,7 +82,14 @@ socket_write(
     $sendData,
     strlen($sendData)
 );
-
+/*
+$sendData =  $changeCipher. $finishedMessage;
+socket_write(
+    $socket,
+    $sendData,
+    strlen($sendData)
+);
+*/
 
 $response = socket_read($socket, 16000);
 var_dump(bin2hex($response));
