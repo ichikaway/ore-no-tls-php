@@ -28,7 +28,8 @@ class Crypt
             //$ciphertext = openssl_encrypt($plaintext, $cipher, $key, OPENSSL_RAW_DATA, $iv, $tag, $add);
             $ciphertext = openssl_encrypt($plaintext, $cipher, $key, OPENSSL_RAW_DATA|OPENSSL_ZERO_PADDING, $iv, $tag, $add);
             //$ciphertext = openssl_encrypt($plaintext, $cipher, $key, $options=0, $iv);
-            //var_dump($ciphertext);
+            //var_dump("-------chpertext-------");
+            //var_dump(bin2hex($ciphertext));
             //var_dump($tag);
             return [$ciphertext, $ivAdd ,$tag];
             //return [$ciphertext, hex2bin($ivAdd), $tag];

@@ -46,6 +46,11 @@ final class Util
     {
         $data = hex2bin($hexString);
         $base64 = base64_encode($data);
-        return "-----BEGIN CERTIFICATE-----\n" . $base64 . "\n-----END CERTIFICATE-----";
+        // 1行64バイトで改行が必要
+        $pem = chunk_split($base64, 64, "\n");
+
+        //echo "-----BEGIN CERTIFICATE-----\n" . $pem. "-----END CERTIFICATE-----" . PHP_EOL;
+        return "-----BEGIN CERTIFICATE-----\n" . $pem. "-----END CERTIFICATE-----";
     }
+
 }
