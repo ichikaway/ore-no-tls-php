@@ -10,36 +10,36 @@ class FinishedMessage
 {
     private MasterSecret $MasterSecret;
 
-    private string $clientHello;
-    private string $serverHello;
-    private string $certificate;
-    private string $serverHelloDone;
-    private string $clientKeyExchange;
+    private string $clientHelloMessage;
+    private string $serverHelloMessage;
+    private string $certificateMessage;
+    private string $serverHelloDoneMessage;
+    private string $clientKeyExchangeMessage;
 
     private string $handshakeMessage; //bin
 
     /**
      * @param MasterSecret $MasterSecret
-     * @param string $clientHello
-     * @param string $serverHello
-     * @param string $certificate
-     * @param string $serverHelloDone
-     * @param string $clientKeyExchange
+     * @param string $clientHelloMessage
+     * @param string $serverHelloMessage
+     * @param string $certificateMessage
+     * @param string $serverHelloDoneMessage
+     * @param string $clientKeyExchangeMessage
      */
     public function __construct(
         MasterSecret $MasterSecret,
-        string $clientHello,
-        string $serverHello,
-        string $certificate,
-        string $serverHelloDone,
-        string $clientKeyExchange
+        string $clientHelloMessage,
+        string $serverHelloMessage,
+        string $certificateMessage,
+        string $serverHelloDoneMessage,
+        string $clientKeyExchangeMessage
     ) {
-        $this->MasterSecret      = $MasterSecret;
-        $this->clientHello       = $clientHello;
-        $this->serverHello       = $serverHello;
-        $this->certificate       = $certificate;
-        $this->serverHelloDone   = $serverHelloDone;
-        $this->clientKeyExchange = $clientKeyExchange;
+        $this->MasterSecret             = $MasterSecret;
+        $this->clientHelloMessage       = $clientHelloMessage;
+        $this->serverHelloMessage       = $serverHelloMessage;
+        $this->certificateMessage       = $certificateMessage;
+        $this->serverHelloDoneMessage   = $serverHelloDoneMessage;
+        $this->clientKeyExchangeMessage = $clientKeyExchangeMessage;
     }
 
 
@@ -101,8 +101,13 @@ var_dump(bin2hex($nonce));
     {
         $masterSecret = $this->MasterSecret->getMasterSecret();
         $label = 'client finished';
-        $handshakeMessages = $this->clientHello . $this->serverHello .
-            $this->certificate . $this->serverHelloDone . $this->clientKeyExchange;
+        $handshakeMessages =
+            $this->clientHelloMessage .
+            $this->serverHelloMessage .
+            $this->certificateMessage .
+            $this->serverHelloDoneMessage .
+            $this->clientKeyExchangeMessage
+        ;
         $seed = $label . hash('sha256', $handshakeMessages, true);
         $len = 12; //12byte
         return Prf::pHash($len, $masterSecret, $seed);
