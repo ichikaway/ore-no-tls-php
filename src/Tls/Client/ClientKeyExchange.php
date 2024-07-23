@@ -39,8 +39,8 @@ class ClientKeyExchange
         //$this->secretRandomHex = bin2hex(pack('x46')); //46byteの0x00を埋める
         $this->preMasterSecret = hex2bin($this->versionHex . $this->secretRandomHex);
         $encryptedSecret = $this->serverCertificate->encryptWithPubKey($this->preMasterSecret);
-        var_dump(bin2hex($this->preMasterSecret));
-        var_dump(bin2hex($encryptedSecret));
+        //var_dump(bin2hex($this->preMasterSecret));
+        //var_dump(bin2hex($encryptedSecret));
         return $encryptedSecret;
     }
 
