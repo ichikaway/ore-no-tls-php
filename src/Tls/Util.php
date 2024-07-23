@@ -52,5 +52,4 @@ final class Util
         //echo "-----BEGIN CERTIFICATE-----\n" . $pem. "-----END CERTIFICATE-----" . PHP_EOL;
         return "-----BEGIN CERTIFICATE-----\n" . $pem. "-----END CERTIFICATE-----";
     }
-
 }
