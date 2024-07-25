@@ -1,6 +1,7 @@
 <?php
 namespace PHPTLS;
 
+use PHPTLS\Tls\Client\ApplicationData;
 use PHPTLS\Tls\Client\ChangeCipherSpec;
 use PHPTLS\Tls\Client\ClientHello;
 use PHPTLS\Tls\Client\ClientKeyExchange;
@@ -75,7 +76,6 @@ $FinishedObj = new FinishedMessage(
     $ClientKeyExchange->getTlsPayload()
 );
 
-//Todo
 //handshake messageを暗号化してfinishメッセージの形式にする
 $finishedMessage = $FinishedObj->createHandshakeMessage();
 
@@ -86,17 +86,25 @@ socket_write(
     $sendData,
     strlen($sendData)
 );
-/*
-$sendData =  $changeCipher. $finishedMessage;
+
+$response = socket_read($socket, 16000);
+echo "received server finish: " . bin2hex($response) . PHP_EOL;
+
+
+//-------------ここから実際のHTTPプロトコルの通信を行う----------------------
+$httpGetReq = "GET / HTTP/1.1\r\n\r\n";
+
+$ApplicationData = new ApplicationData($MasterSecret, $Sequence);
+
+$sendData = $ApplicationData->encrypt($httpGetReq);
 socket_write(
     $socket,
     $sendData,
     strlen($sendData)
 );
-*/
 
 $response = socket_read($socket, 16000);
-var_dump(bin2hex($response));
+echo "received GET response: " . bin2hex($response) . PHP_EOL;
 
 
 // ソケットを閉じる
