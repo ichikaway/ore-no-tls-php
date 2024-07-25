@@ -7,6 +7,7 @@ use PHPTLS\Tls\Client\ClientKeyExchange;
 use PHPTLS\Tls\Client\FinishedMessage;
 use PHPTLS\Tls\Client\MasterSecret;
 use PHPTLS\Tls\Client\ParseServerHello;
+use PHPTLS\Tls\Client\Sequence;
 
 require 'vendor/autoload.php';
 
@@ -62,8 +63,11 @@ $preMasterSecret = $ClientKeyExchange->getPreMasterSecret();
 $clientRandom = $ClientHelloObj->getClientHelloRandom();
 $serverRandom = $recvServerHello->serverHello->getServerRandom();
 $MasterSecret = new MasterSecret($preMasterSecret, $clientRandom, $serverRandom);
+$Sequence = new Sequence();
+
 $FinishedObj = new FinishedMessage(
     $MasterSecret,
+    $Sequence,
     $ClientHelloObj->getTlsPayload(),
     $recvServerHello->serverHello->getTlsPayload(),
     $recvServerHello->certificate->getTlsPayload(),

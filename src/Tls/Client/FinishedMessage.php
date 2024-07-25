@@ -10,6 +10,8 @@ class FinishedMessage
 {
     private MasterSecret $MasterSecret;
 
+    private Sequence $Sequence;
+
     private string $clientHelloMessage;
     private string $serverHelloMessage;
     private string $certificateMessage;
@@ -20,6 +22,7 @@ class FinishedMessage
 
     /**
      * @param MasterSecret $MasterSecret
+     * @param Sequence $Sequence
      * @param string $clientHelloMessage
      * @param string $serverHelloMessage
      * @param string $certificateMessage
@@ -28,6 +31,7 @@ class FinishedMessage
      */
     public function __construct(
         MasterSecret $MasterSecret,
+        Sequence $Sequence,
         string $clientHelloMessage,
         string $serverHelloMessage,
         string $certificateMessage,
@@ -35,6 +39,7 @@ class FinishedMessage
         string $clientKeyExchangeMessage
     ) {
         $this->MasterSecret             = $MasterSecret;
+        $this->Sequence                 = $Sequence;
         $this->clientHelloMessage       = $clientHelloMessage;
         $this->serverHelloMessage       = $serverHelloMessage;
         $this->certificateMessage       = $certificateMessage;
@@ -45,7 +50,6 @@ class FinishedMessage
 
     public function createHandshakeMessage(): string
     {
-
         // 暗号化する対象のハンドシェイクメッセージを作成
         $verifyData = $this->createVerifyData();
         $verifyDataLen = Util::decToHexWithLen(strlen($verifyData), 3);
@@ -56,13 +60,13 @@ class FinishedMessage
         //暗号化前のコンテンツの長さを入れる
         $contentLen = Util::decToHexWithLen(strlen($this->handshakeMessage), 2);
         $recordHeader = hex2bin('160303' . $contentLen);
-        $seq = hex2bin('0000000000000000');
+        $seq = $this->Sequence->getSequenceNumberBin();
         $AAD = $seq . $recordHeader;
         //var_dump(bin2hex($AAD));
 
         $key = $this->MasterSecret->getClientKey();
         $iv = $this->MasterSecret->getClientIV();
-        list($encrypt, $nonce, $tag) = Crypt::encryptAesGcm($this->handshakeMessage, $key, $iv, $AAD);
+        list($encrypt, $nonce, $tag) = Crypt::encryptAesGcm($this->handshakeMessage, $key, $iv, $AAD, $seq);
 
         //var_dump(bin2hex($encrypt));
         //var_dump(bin2hex($tag));
