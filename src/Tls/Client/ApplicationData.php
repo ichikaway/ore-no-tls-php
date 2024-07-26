@@ -11,7 +11,7 @@ class ApplicationData
     private Sequence $Sequence;
 
     //TLSレコードヘッダの先頭からのContentTypeとLengthまでのデータ長
-    private const int RecordHeaderOffsetOfContentTypeAndLength = 3;
+    private const int RecordHeaderOffset = 5;
 
     /**
      * @param MasterSecret $MasterSecret
