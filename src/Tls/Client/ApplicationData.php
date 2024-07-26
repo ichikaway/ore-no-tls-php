@@ -21,7 +21,11 @@ class ApplicationData
     }
 
 
-    public function encrypt(string $contentBin)
+    /**
+     * @param string $contentBin
+     * @return string bin
+     */
+    public function encrypt(string $contentBin): string
     {
         $this->Sequence->incrementSequenceNumber();
 
