@@ -60,9 +60,13 @@ class ApplicationData
     {
         $key = $this->MasterSecret->getServerKey();
         $iv = $this->MasterSecret->getServerIV();
+
+        //受信したTLSレコードは、nonce(8byte) + 暗号データ(data + tag(16byte))となっているため、
+        // nonceと暗号データを切り出す
         $ivExplicit = $this->getIvExplicit($tlsRecord);
         $encryptedData = $this->getEncryptedContent($tlsRecord);
 
+        //nonceは、サーバ側のIVとレスポンスについてた8byteを連結したもの
         $nonce = $iv . $ivExplicit;
 
         //var_dump(bin2hex($ivExplicit));
