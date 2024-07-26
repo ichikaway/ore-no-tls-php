@@ -10,6 +10,9 @@ class ApplicationData
     private MasterSecret $MasterSecret;
     private Sequence $Sequence;
 
+    //TLSレコードヘッダの先頭からのContentTypeとLengthまでのデータ長
+    private const int RecordHeaderOffsetOfContentTypeAndLength = 3;
+
     /**
      * @param MasterSecret $MasterSecret
      * @param Sequence $Sequence
@@ -51,5 +54,34 @@ class ApplicationData
         $len = Util::decToHexWithLen(strlen($output), 2);
         $data = hex2bin('170303' . $len) . $output;
         return $data;
+    }
+
+    public function decrypt(string $tlsRecord): string
+    {
+        $key = $this->MasterSecret->getServerKey();
+        $iv = $this->MasterSecret->getServerIV();
+        $ivExplicit = $this->getIvExplicit($tlsRecord);
+        $encryptedData = $this->getEncryptedContent($tlsRecord);
+
+        $nonce = $iv . $ivExplicit;
+
+        //var_dump(bin2hex($ivExplicit));
+        //var_dump(bin2hex($encryptedData));
+
+        $data = Crypt::decryptAesGcm($encryptedData, $key, $nonce);
+        var_dump($data);
+        return '';
+    }
+
+    public function getIvExplicit(string $contentBin): string
+    {
+        $content = substr($contentBin, self::RecordHeaderOffsetOfContentTypeAndLength);
+        return substr($content, 0, 8); //先頭8バイトまで
+    }
+
+    public function getEncryptedContent(string $contentBin): string
+    {
+        $content = substr($contentBin, self::RecordHeaderOffsetOfContentTypeAndLength);
+        return substr($content, 8); //8バイト以降
     }
 }

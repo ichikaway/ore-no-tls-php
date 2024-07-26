@@ -106,6 +106,7 @@ socket_write(
 $response = socket_read($socket, 16000);
 echo "received GET response: " . bin2hex($response) . PHP_EOL;
 
+$ApplicationData->decrypt($response);
 
 // ソケットを閉じる
 socket_close($socket);

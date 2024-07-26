@@ -4,6 +4,14 @@ namespace PHPTLS\Tls;
 
 class Crypt
 {
+    public static function decryptAesGcm(string $encryptedData, string $key, string $iv): string
+    {
+        $cipher = "aes-128-gcm";
+        $data = openssl_decrypt($encryptedData, $cipher, $key, 0, $iv);
+        return $data;
+    }
+
+
     public static function encryptAesGcm(string $plaintext, string $key, string $iv, string $add, string $seq)
     {
         $cipher = "aes-128-gcm";
