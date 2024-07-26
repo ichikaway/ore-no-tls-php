@@ -39,6 +39,15 @@ class MasterSecret
         return $this->keyBlock['ClientWriteIV'];
     }
 
+    public function getServerKey(): string
+    {
+        return $this->keyBlock['ServerWriteKey'];
+    }
+    public function getServerIV(): string
+    {
+        return $this->keyBlock['ServerWriteIV'];
+    }
+
     public function createKeyBlock()
     {
         $this->keyBlock = Prf::createKeyBlock($this->masterSecretBin, $this->clientRandomBin, $this->serverRandomBin);
