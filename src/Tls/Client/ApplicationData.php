@@ -38,17 +38,20 @@ class ApplicationData
         //$message = $header . $contentBin;
         $message = $contentBin;
 
-        // AADに入れてハッシュ値で改ざんチェックようにするため、こちらはTLSヘッダの情報とアプリケーションコンテンツの情報を一緒にする
-        $contentLen = Util::decToHexWithLen(strlen($contentBin), 2);
-        $recordHeader = hex2bin('170303' . $contentLen);
+        // ADDデータ作成
+        // additional_data = seq_num + TLSCompressed.type + TLSCompressed.version + TLSCompressed.length;
+        // AADに入れてハッシュ値で改ざんチェック用にする
+        //こちらはTLSヘッダの情報と暗号化前のアプリケーションコンテンツのlengthを一緒にする
+        $contentLen  = strlen($contentBin);
+        $AAD = $this->createAdditionalData($contentLen);
         $seq = $this->Sequence->getSequenceNumberBin();
-        $AAD = $seq . $recordHeader;
         //var_dump(bin2hex($AAD));
 
         $key = $this->MasterSecret->getClientKey();
         $iv = $this->MasterSecret->getClientIV();
         list($encrypt, $nonce, $tag) = Crypt::encryptAesGcm($message, $key, $iv, $AAD, $seq);
 
+        // TLSのボディには、nonce + 暗号化データ + tagを連携したものを入れる
         $output = $nonce.$encrypt.$tag;
 
         $len = Util::decToHexWithLen(strlen($output), 2);
@@ -69,8 +72,12 @@ class ApplicationData
         //nonceは、サーバ側のIVとレスポンスについてた8byteを連結したもの
         $nonce = $iv . $ivExplicit;
 
-        $AAD = $this->getAdd($encryptedData);
-        //$tlsLen = bin2hex(substr($tlsRecord, 3, 2));
+        //暗号データからAADを作成
+        //暗号データは、暗号データ + tag(16byte)
+        //暗号データサイズは、暗号データからタグのサイズ16byteを引いた長さ、
+        $contentLen = strlen($encryptedData) - 16; //tagの16byteを除いた長さ
+        $AAD = $this->createAdditionalData($contentLen);
+
         //var_dump(hexdec($tlsLen));
         //var_dump(bin2hex($ivExplicit));
         //var_dump(bin2hex($encryptedData));
@@ -83,18 +90,14 @@ class ApplicationData
     }
 
     /**
-     * 暗号データからAADを作成
-     * 暗号データは、暗号データ + tag(16byte)
-     * 暗号データサイズは、暗号データからタグのサイズ16byteを引いた長さ、
-     *
+     * コンテンツの長さを元に AEADの additional dataを返す
      * additional_data = seq_num + TLSCompressed.type + TLSCompressed.version + TLSCompressed.length;
      *
-     * @param string $encryptedData bin
+     * @param int $contentLen
      * @return string bin
      */
-    public function getAdd(string $encryptedData): string
+    public function createAdditionalData(int $contentLen): string
     {
-        $contentLen = strlen($encryptedData) - 16; //tagの16byteを除いた長さ
         //var_dump($contentLen);
         $recordHeader = hex2bin('170303' . Util::decToHexWithLen($contentLen, 2));
         //var_dump(bin2hex($recordHeader));

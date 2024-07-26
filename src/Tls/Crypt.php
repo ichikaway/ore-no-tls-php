@@ -8,6 +8,7 @@ class Crypt
     {
         $cipher = "aes-128-gcm";
 
+        // 暗号化データ+tag(16byte)のデータになっているため、分割する
         $tagLen = 16;
         $tag = substr($encryptedData, strlen($encryptedData) - $tagLen, $tagLen);
         $data = substr($encryptedData, 0, strlen($encryptedData) - $tagLen);
