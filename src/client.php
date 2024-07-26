@@ -104,9 +104,13 @@ socket_write(
 );
 
 $response = socket_read($socket, 16000);
-echo "received GET response: " . bin2hex($response) . PHP_EOL;
 
-$ApplicationData->decrypt($response);
+echo "received GET response: " . bin2hex($response) . PHP_EOL;
+echo "\n\n";
+$html = $ApplicationData->decrypt($response);
+
+echo $httpGetReq ;
+var_dump($html);
 
 // ソケットを閉じる
 socket_close($socket);

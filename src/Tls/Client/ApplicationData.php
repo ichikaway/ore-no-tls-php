@@ -69,23 +69,66 @@ class ApplicationData
         //nonceは、サーバ側のIVとレスポンスについてた8byteを連結したもの
         $nonce = $iv . $ivExplicit;
 
+        $AAD = $this->getAdd($encryptedData);
+        //$tlsLen = bin2hex(substr($tlsRecord, 3, 2));
+        //var_dump(hexdec($tlsLen));
         //var_dump(bin2hex($ivExplicit));
         //var_dump(bin2hex($encryptedData));
 
-        $data = Crypt::decryptAesGcm($encryptedData, $key, $nonce);
-        var_dump($data);
-        return '';
+        //var_dump(bin2hex($AAD));
+
+        $data = Crypt::decryptAesGcm($encryptedData, $key, $nonce, $AAD);
+        //var_dump($data);
+        return $data;
     }
 
-    public function getIvExplicit(string $contentBin): string
+    /**
+     * 暗号データからAADを作成
+     * 暗号データは、暗号データ + tag(16byte)
+     * 暗号データサイズは、暗号データからタグのサイズ16byteを引いた長さ、
+     *
+     * additional_data = seq_num + TLSCompressed.type + TLSCompressed.version + TLSCompressed.length;
+     *
+     * @param string $encryptedData bin
+     * @return string bin
+     */
+    public function getAdd(string $encryptedData): string
     {
-        $content = substr($contentBin, self::RecordHeaderOffsetOfContentTypeAndLength);
+        $contentLen = strlen($encryptedData) - 16; //tagの16byteを除いた長さ
+        //var_dump($contentLen);
+        $recordHeader = hex2bin('170303' . Util::decToHexWithLen($contentLen, 2));
+        //var_dump(bin2hex($recordHeader));
+        //$this->Sequence->incrementSequenceNumber();
+        $seq = $this->Sequence->getSequenceNumberBin();
+        $AAD = $seq . $recordHeader;
+        return $AAD;
+    }
+
+    /**
+     * TCPで受信したTLSレコードのデータを渡して、nonceのexplicitの8バイトを切り出す
+     *
+     * @param string $tlsRecord bin
+     * @return string bin
+     */
+    public function getIvExplicit(string $tlsRecord): string
+    {
+        $tlsLen = bin2hex(substr($tlsRecord, 3, 2));
+        $content = substr($tlsRecord, self::RecordHeaderOffset, hexdec($tlsLen));
         return substr($content, 0, 8); //先頭8バイトまで
     }
 
-    public function getEncryptedContent(string $contentBin): string
+    /**
+     * TCPで受信したTLSレコードのデータを渡して、暗号化されたコンテンツデータを切り出して返す
+     *
+     * @param string $tlsRecord bin
+     * @return string bin
+     */
+    public function getEncryptedContent(string $tlsRecord): string
     {
-        $content = substr($contentBin, self::RecordHeaderOffsetOfContentTypeAndLength);
+        // ApplicationDataと一緒にAlert(close)のデータもくる場合があるため、
+        // tlsレコードのlengthにセットされている長さだけ切り出す
+        $tlsLen = bin2hex(substr($tlsRecord, 3, 2));
+        $content = substr($tlsRecord, self::RecordHeaderOffset, hexdec($tlsLen));
         return substr($content, 8); //8バイト以降
     }
 }

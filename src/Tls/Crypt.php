@@ -4,11 +4,15 @@ namespace PHPTLS\Tls;
 
 class Crypt
 {
-    public static function decryptAesGcm(string $encryptedData, string $key, string $iv): string
+    public static function decryptAesGcm(string $encryptedData, string $key, string $iv, $AAD): string
     {
         $cipher = "aes-128-gcm";
-        $data = openssl_decrypt($encryptedData, $cipher, $key, 0, $iv);
-        return $data;
+
+        $tagLen = 16;
+        $tag = substr($encryptedData, strlen($encryptedData) - $tagLen, $tagLen);
+        $data = substr($encryptedData, 0, strlen($encryptedData) - $tagLen);
+
+        return openssl_decrypt($data, $cipher, $key, OPENSSL_RAW_DATA, $iv, $tag, $AAD);
     }
 
 
