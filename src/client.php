@@ -103,6 +103,9 @@ $httpGetReq = "GET / HTTP/1.1\r\n\r\n";
 $ApplicationData = new ApplicationData($MasterSecret, $Sequence);
 
 $sendData = $ApplicationData->encrypt($httpGetReq);
+//echo "request data:\n" . bin2hex($httpGetReq).PHP_EOL;
+//echo "sendData:\n" . bin2hex($sendData).PHP_EOL;
+
 socket_write(
     $socket,
     $sendData,
@@ -118,5 +121,6 @@ $html = $ApplicationData->decrypt($response);
 echo $httpGetReq ;
 var_dump($html);
 
+//echo "decrypt html hex:\n" . bin2hex($html);
 // ソケットを閉じる
 socket_close($socket);
