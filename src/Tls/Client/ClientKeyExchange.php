@@ -9,7 +9,7 @@ class ClientKeyExchange
     use TlsMessageTrait;
 
     private string $versionHex = '0303'; //TLS1.2
-    private string $secretRandomHex = '01010101010101010101020202020202020202020303030303030303030304040404040404040404050505050505'; //46byte
+    private string $secretRandomHex;
 
     private ServerCertificate $serverCertificate;
 
@@ -53,12 +53,12 @@ class ClientKeyExchange
     }
 
     /**
-     * Client Key Exchange のペイロードを作成する(hex)
+     * Client Key Exchange のペイロードを作成する
      *
-     * @return string
+     * @return string bin
      * @throws \Exception
      */
-    public function createClientKeyExchangeDataHex(): string
+    public function createClientKeyExchangeData(): string
     {
         $encryptedPreMasterSecret = $this->createPreMasterSecret();
         $lengthOfPreMasterSecret = strlen($encryptedPreMasterSecret);
@@ -89,7 +89,7 @@ class ClientKeyExchange
             Util::decToHexWithLen($lengthOfHandShakeExchange, 2) .
             $handShakeExchange
         ;
-        $this->dataHex = $clientKeyExchange;
-        return $clientKeyExchange;
+        $this->data = hex2bin($clientKeyExchange);
+        return $this->data;
     }
 }

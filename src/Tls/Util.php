@@ -21,6 +21,21 @@ final class Util
     }
 
     /**
+     * TLSのバイト列から、TLSヘッダのlengthをintで返す
+     *
+     * @param string $byte
+     * @param int $offset
+     * @param int $len
+     * @return int
+     */
+    static function getTlsLengthFromByte(string $byte, int $offset = 3, int $len = 2): int
+    {
+        $data = substr($byte, $offset, $len);
+        $hex = bin2hex($data);
+        return hexdec($hex);
+    }
+
+    /**
      * 10進数の数字を与えると16進数で返す。byteLengthで指定した桁数でパディングする。
      * 例えば decimal=77, byteLength=2 を入れると '004D' が返る
      *
@@ -37,19 +52,17 @@ final class Util
     }
 
     /**
-     * x.509のhexデータを渡すとPEM形式の文字列で返す
+     * x.509のbinaryデータを渡すとPEM形式の文字列で返す
      *
-     * @param  string $hexString
+     * @param  string $data bin
      * @return string
      */
-    static function hexToPem(string $hexString): string
+    static function binToPem(string $data): string
     {
-        $data = hex2bin($hexString);
         $base64 = base64_encode($data);
         // 1行64バイトで改行が必要
         $pem = chunk_split($base64, 64, "\n");
 
-        //echo "-----BEGIN CERTIFICATE-----\n" . $pem. "-----END CERTIFICATE-----" . PHP_EOL;
         return "-----BEGIN CERTIFICATE-----\n" . $pem. "-----END CERTIFICATE-----";
     }
 }

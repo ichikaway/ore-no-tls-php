@@ -48,12 +48,20 @@ class FinishedMessage
     }
 
 
+    /**
+     * Client Finishのハンドシェイクメッセージ作成
+     *
+     * @return string bin
+     */
     public function createHandshakeMessage(): string
     {
         // 暗号化する対象のハンドシェイクメッセージを作成
+        //14 - handshake message type 0x14 (finished)
+        //00 00 0c - 0xC (12) bytes of handshake finished follows
+        $handshakeMessageType = '14';
         $verifyData = $this->createVerifyData();
         $verifyDataLen = Util::decToHexWithLen(strlen($verifyData), 3);
-        $handshakeHeader = hex2bin('14' . $verifyDataLen);
+        $handshakeHeader = hex2bin($handshakeMessageType . $verifyDataLen);
         $this->handshakeMessage = $handshakeHeader . $verifyData;
 
         // AEAD(認証付き暗号)の暗号化のためのAADを作成する
@@ -90,8 +98,7 @@ class FinishedMessage
 
         $len = Util::decToHexWithLen(strlen($output), 2);
         //var_dump($len);
-        $data = hex2bin('160303' . $len) . $output;
-        return $data;
+        return hex2bin('160303' . $len) . $output;
     }
 
     /**

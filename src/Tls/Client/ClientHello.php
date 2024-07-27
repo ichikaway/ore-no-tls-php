@@ -35,9 +35,9 @@ class ClientHello
             Util::decToHexWithLen($len, 2) .
             $clientHello
             ;
-        $this->dataHex = $clientHelloAll;
+        $this->data = hex2bin($clientHelloAll);
 
-        return hex2bin($clientHelloAll);
+        return $this->data;
     }
 
     private function createRandomByteHex(): string
