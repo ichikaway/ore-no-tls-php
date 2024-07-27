@@ -54,7 +54,7 @@ $recvServerHello = new ParseServerHello($response);
 
 // Client Key Exchangeデータ作成
 $ClientKeyExchange = new ClientKeyExchange($recvServerHello->certificate);
-$clientKeyExchangeData = hex2bin($ClientKeyExchange->createClientKeyExchangeDataHex());
+$clientKeyExchangeData = hex2bin($ClientKeyExchange->createClientKeyExchangeData());
 
 // ClientCipherSpecデータ作成
 $changeCipher = hex2bin(ChangeCipherSpec::createChangeCipherSpec());
