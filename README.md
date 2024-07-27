@@ -3,6 +3,28 @@
 TLS1.2を学習するためにPHPでTLSクライアントを実装する。  
 ClientHelloを送信して、暗号化されたコンテンツを複合し、HTMLを表示するまでがゴール。  
 
+## 暗号化/ハッシュで利用したPHP関数
+
+- hash_hmac()
+  - TLS1.2のpHash関数の実装で利用
+  - メモ: TLS1.3の場合は独自でpHashが不要でhash_hkdf()というPHP関数が利用できる
+- openssl_random_pseudo_bytes()
+  - Client key exchangeの secret random の値生成
+- openssl_x509_read()
+  - 証明書のデータを解析
+- openssl_pkey_get_public()
+  - 証明書からRSAの公開鍵を抽出
+- openssl_public_encrypt()
+  - RSA公開鍵を使って暗号化
+- openssl_get_cipher_methods()
+  - 暗号化で使えるアルゴリズム一覧を取得。利用する暗号化方式がこの一覧にあるかチェックするため。
+- openssl_cipher_iv_length()
+  - 暗号化方式によってIVの長さが異なるため、利用する暗号用のIVの長さを取得
+- openssl_encrypt()
+  - 共通鍵を使った暗号化。今回はAEAD方式のGCM。
+- openssl_decrypt()
+  - 共通鍵を使った復号。今回はAEAD方式のGCM。
+
 ## 参考文献
 
 - [golangで作るTLS1.2プロトコル](https://zenn.dev/satoken/articles/golang-tls1_2)
