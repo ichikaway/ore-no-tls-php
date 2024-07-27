@@ -21,6 +21,21 @@ final class Util
     }
 
     /**
+     * TLSのバイト列から、TLSヘッダのlengthをintで返す
+     *
+     * @param string $byte
+     * @param int $offset
+     * @param int $len
+     * @return int
+     */
+    static function getTlsLengthFromByte(string $byte, int $offset = 3, int $len = 2): int
+    {
+        $data = substr($byte, $offset, $len);
+        $hex = bin2hex($data);
+        return hexdec($hex);
+    }
+
+    /**
      * 10進数の数字を与えると16進数で返す。byteLengthで指定した桁数でパディングする。
      * 例えば decimal=77, byteLength=2 を入れると '004D' が返る
      *
