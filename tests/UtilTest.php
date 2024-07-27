@@ -67,7 +67,7 @@ J1H9E24dcCgvHMxty9G2hKKqYiqUc/LGGCu5DWhW1XzaaVvs9KdZbIw2lnn26GoX
 ssRmtMM0mFPnyFjVpQDWS39Vn8QzOA==
 -----END CERTIFICATE-----';
 
-        $result = Util::hexToPem($data);
+        $result = Util::binToPem(hex2bin($data));
         $this->assertEquals($expect, $result);
     }
 }

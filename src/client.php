@@ -46,7 +46,7 @@ socket_write($socket, $clientHello, strlen($clientHello));
 // サーバーからの応答を読み取る
 $response = socket_read($socket, 8000);
 
-$recvServerHello = new ParseServerHello(bin2hex($response));
+$recvServerHello = new ParseServerHello($response);
 
 //$serverCert = $recvServerHello->certificate->getServerPubKeyFromCert();
 //$keyData = openssl_pkey_get_details($serverCert);

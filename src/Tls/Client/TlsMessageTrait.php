@@ -2,11 +2,9 @@
 
 namespace PHPTLS\Tls\Client;
 
-use PHPTLS\Tls\Util;
-
 trait TlsMessageTrait
 {
-    private string $data;
+    private readonly string $data;
     /**
      * レコードヘッダを除いたTLSメッセージを抽出する
      *
@@ -24,6 +22,5 @@ trait TlsMessageTrait
         $offset = 5; //TLSレコードヘッダはtype(1byte), version(2byte), length(2byte)の合計5バイト
         $len = strlen($data) - $offset;
         return substr($data, $offset, $len);
-        //return hex2bin(Util::getHexDataWithLen($data, $offset, $len)); //レコードヘッダを除いたデータを切り出し
     }
 }
