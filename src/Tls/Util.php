@@ -5,22 +5,6 @@ final class Util
 {
 
     /**
-     * 16進数のデータから指定のオフセットと長さでデータを切り出す
-     * 指定バイト目からlengthバイト分の値を取得する（インデックスは0から始まる)
-     *
-     * @param  string $hexString
-     * @param  int    $offset
-     * @param  int    $length
-     * @return string 16進数
-     */
-    static function getHexDataWithLen(string $hexString, int $offset, int $length): string
-    {
-        $offset *= 2; // バイト目（16進数は1バイトが2文字なので2を掛ける）
-        $length *= 2; // バイト分（16進数は1バイトが2文字なので2を掛ける）
-        return substr($hexString, $offset, $length);
-    }
-
-    /**
      * TLSのバイト列から、TLSヘッダのlengthをintで返す
      *
      * @param string $byte

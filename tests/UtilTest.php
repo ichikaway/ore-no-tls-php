@@ -5,12 +5,6 @@ use PHPUnit\Framework\TestCase;
 
 class UtilTest extends TestCase
 {
-    public function testGetByteDataWithLen()
-    {
-        $hexString = "160303004a0200004603034016c02bfc25c39437c523f7b9cda73d7ecc0fd1309b8c9aafd884f4a45591552075654b2e5fff2ad6517ab57acc7a977a985e3e802723350a3798daf9d11de108009c00";
-        $expectedValue = "004a";
-        $this->assertEquals($expectedValue, Util::getHexDataWithLen($hexString, 3, 2));
-    }
 
     public function test_getTlsLengthFromByte()
     {
