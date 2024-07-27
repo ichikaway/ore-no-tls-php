@@ -66,6 +66,12 @@ $serverRandom = $recvServerHello->serverHello->getServerRandom();
 $MasterSecret = new MasterSecret($preMasterSecret, $clientRandom, $serverRandom);
 $Sequence = new Sequence();
 
+//echo "create Master Secret\n";
+//echo bin2hex($preMasterSecret) . PHP_EOL;
+//echo bin2hex($clientRandom) . PHP_EOL;
+//echo bin2hex($serverRandom) . PHP_EOL;
+//echo "finish create Master Secret\n\n";
+
 $FinishedObj = new FinishedMessage(
     $MasterSecret,
     $Sequence,

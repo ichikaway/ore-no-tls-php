@@ -107,6 +107,13 @@ class FinishedMessage
      */
     public function createVerifyData(): string
     {
+        //echo "create VerifyData\n".
+        //bin2hex($this->clientHelloMessage) . PHP_EOL.
+        //bin2hex($this->serverHelloMessage) . PHP_EOL.
+        //bin2hex($this->certificateMessage) . PHP_EOL.
+        //bin2hex($this->serverHelloDoneMessage) . PHP_EOL.
+        //bin2hex($this->clientKeyExchangeMessage) .PHP_EOL;
+
         $masterSecret = $this->MasterSecret->getMasterSecret();
         $label = 'client finished';
         $handshakeMessages =
