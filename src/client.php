@@ -16,10 +16,9 @@ if ($argc < 2) {
     fwrite(STDERR, "Error: No argument provided.\n");
     exit(1);
 }
-$hostIp = $argv[1];
-//echo "First argument: $firstArgument\n";
+$host = $argv[1];
+$hostIp = gethostbyname($host);
 
-// $host = '127.0.0.1';
 $port = 443;
 
 
