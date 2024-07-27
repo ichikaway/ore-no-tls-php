@@ -9,11 +9,11 @@ class ParseServerHello
     /**
      * @var string
      */
-    public readonly string $data; //hex
+    public readonly string $data; //bin
 
-    public readonly ServerHello $serverHello;
-    public readonly ServerCertificate $certificate;
-    public readonly ServerHelloDone $serverHelloDone;
+    public readonly ServerHello $serverHello; //bin
+    public readonly ServerCertificate $certificate; //bin
+    public readonly ServerHelloDone $serverHelloDone; //bin
 
     //TLSレコードヘッダの先頭からのContentTypeとLengthまでのデータ長
     private const int RecordHeaderOffsetOfContentTypeAndLength = 3;
@@ -23,7 +23,7 @@ class ParseServerHello
 
     public function __construct(string $data)
     {
-        $this->data = $data;
+        $this->data = $data; //bin
         $parsedData = $this->parse();
         $this->serverHello = new ServerHello($parsedData['ServerHello']);
         $this->certificate = new ServerCertificate($parsedData['Certificate']);
@@ -40,28 +40,28 @@ class ParseServerHello
     public function parse(): array
     {
         //受信データの先頭から3バイト目にあるTLSパケットのLengthを取得。Lengthは2バイト長。
-        $serverHelloLen = hexdec(Util::getHexDataWithLen($this->data, self::RecordHeaderOffsetOfContentTypeAndLength, 2));
+        $serverHelloLen = Util::getTlsLengthFromByte($this->data);
         // 最初のServerHelloのTLSパケットの全体の長さを計算
         $serverHelloAllLen = $serverHelloLen + self::RecordHeaderOffsetOfContentTypeAndTlsVerAndLen;
         // 受信データの先頭からTLSパケットの長さだけデータ切り出し。16進数のデータ
-        $serverHelloHex = Util::getHexDataWithLen($this->data, 0, $serverHelloAllLen);
+        $serverHelloBin = substr($this->data, 0, $serverHelloAllLen);
 
         // Certificateのデータ切り出し。Certificateのデータが始まるのは、ServerHelloのデータの後になる
         $certificateOffset = $serverHelloAllLen;
-        $certificateLen = hexdec(Util::getHexDataWithLen($this->data, $certificateOffset + self::RecordHeaderOffsetOfContentTypeAndLength, 2));
+        $certificateLen = Util::getTlsLengthFromByte($this->data, $certificateOffset + self::RecordHeaderOffsetOfContentTypeAndLength);
         $certificateAllLen = $certificateLen + self::RecordHeaderOffsetOfContentTypeAndTlsVerAndLen;
-        $certificateHex = Util::getHexDataWithLen($this->data, $certificateOffset, $certificateAllLen);
+        $certificateBin = substr($this->data, $certificateOffset, $certificateAllLen);
 
         // ServerHelloDoneのデータ切り出し。Certificateのデータの後に続くデータを切り出し
         $serverHelloDoneOffset = $serverHelloAllLen + $certificateAllLen;
-        $serverHelloDoneLen = hexdec(Util::getHexDataWithLen($this->data, $serverHelloDoneOffset + self::RecordHeaderOffsetOfContentTypeAndLength, 2));
+        $serverHelloDoneLen = Util::getTlsLengthFromByte($this->data, $serverHelloDoneOffset + self::RecordHeaderOffsetOfContentTypeAndLength);
         $serverHelloDoneAllLen = $serverHelloDoneLen + self::RecordHeaderOffsetOfContentTypeAndTlsVerAndLen;
-        $serverHelloDoneHex = Util::getHexDataWithLen($this->data, $serverHelloDoneOffset, $serverHelloDoneAllLen);
+        $serverHelloDoneBin = substr($this->data, $serverHelloDoneOffset, $serverHelloDoneAllLen);
 
         return [
-            'ServerHello' => $serverHelloHex,
-            'Certificate' => $certificateHex,
-            'ServerHelloDone' => $serverHelloDoneHex,
+            'ServerHello' => $serverHelloBin,
+            'Certificate' => $certificateBin,
+            'ServerHelloDone' => $serverHelloDoneBin,
         ];
     }
 }

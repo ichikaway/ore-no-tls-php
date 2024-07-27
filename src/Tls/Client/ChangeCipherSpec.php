@@ -9,7 +9,7 @@ class ChangeCipherSpec
     private static string $handShakeHex = '14'; // Change Cipher Spec
 
     /**
-     * @return string hex
+     * @return string bin
      */
     public static function createChangeCipherSpec(): string
     {
@@ -18,6 +18,6 @@ class ChangeCipherSpec
             self::$versionHex .
             '0001' . //length
             '01' ; //1 byte
-        return $data;
+        return hex2bin($data);
     }
 }

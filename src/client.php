@@ -46,7 +46,7 @@ socket_write($socket, $clientHello, strlen($clientHello));
 // サーバーからの応答を読み取る
 $response = socket_read($socket, 8000);
 
-$recvServerHello = new ParseServerHello(bin2hex($response));
+$recvServerHello = new ParseServerHello($response);
 
 //$serverCert = $recvServerHello->certificate->getServerPubKeyFromCert();
 //$keyData = openssl_pkey_get_details($serverCert);
@@ -54,10 +54,10 @@ $recvServerHello = new ParseServerHello(bin2hex($response));
 
 // Client Key Exchangeデータ作成
 $ClientKeyExchange = new ClientKeyExchange($recvServerHello->certificate);
-$clientKeyExchangeData = hex2bin($ClientKeyExchange->createClientKeyExchangeDataHex());
+$clientKeyExchangeData = $ClientKeyExchange->createClientKeyExchangeData();
 
 // ClientCipherSpecデータ作成
-$changeCipher = hex2bin(ChangeCipherSpec::createChangeCipherSpec());
+$changeCipher = ChangeCipherSpec::createChangeCipherSpec();
 
 // Finishedデータ作成
 $preMasterSecret = $ClientKeyExchange->getPreMasterSecret();

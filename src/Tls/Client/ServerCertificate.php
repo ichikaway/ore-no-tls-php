@@ -8,12 +8,10 @@ class ServerCertificate
 {
     use TlsMessageTrait;
 
-    private readonly string $data; //hex
 
     public function __construct(string $data)
     {
         $this->data = $data;
-        $this->dataHex = $data;
     }
 
     /**
@@ -27,10 +25,10 @@ class ServerCertificate
         //12バイト目からの３バイトで最初の証明書のLengthがわかる
         $offset = 12;
         $byte = 3;
-        $length = hexdec(Util::getHexDataWithLen($this->data, $offset, $byte));
+        $length = Util::getTlsLengthFromByte($this->data, $offset, $byte);
         $certOffset = $offset + $byte;
 
-        return Util::getHexDataWithLen($this->data, $certOffset, $length);
+        return substr($this->data, $certOffset, $length);
     }
 
     /**
@@ -43,7 +41,7 @@ class ServerCertificate
     public function getCertData(): \OpenSSLCertificate
     {
         $data = $this->getPrimaryCert();
-        $x509 = openssl_x509_read(Util::hexToPem($data));
+        $x509 = openssl_x509_read(Util::binToPem($data));
         if ($x509 === false) {
             throw new \Exception('Unable to read X509 data');
         }

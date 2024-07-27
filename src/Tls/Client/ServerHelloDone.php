@@ -8,6 +8,6 @@ class ServerHelloDone
 
     public function __construct(string $data)
     {
-        $this->dataHex = $data;
+        $this->data = $data;
     }
 }
