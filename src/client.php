@@ -54,10 +54,10 @@ $recvServerHello = new ParseServerHello($response);
 
 // Client Key Exchangeデータ作成
 $ClientKeyExchange = new ClientKeyExchange($recvServerHello->certificate);
-$clientKeyExchangeData = hex2bin($ClientKeyExchange->createClientKeyExchangeData());
+$clientKeyExchangeData = $ClientKeyExchange->createClientKeyExchangeData();
 
 // ClientCipherSpecデータ作成
-$changeCipher = hex2bin(ChangeCipherSpec::createChangeCipherSpec());
+$changeCipher = ChangeCipherSpec::createChangeCipherSpec();
 
 // Finishedデータ作成
 $preMasterSecret = $ClientKeyExchange->getPreMasterSecret();
