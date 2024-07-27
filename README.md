@@ -45,6 +45,8 @@ ClientHelloを送信して、暗号化されたコンテンツを複合し、HTM
   - ハンドシェイクの流れがざっと分かる
 - [The Illustrated TLS 1.2 Connection](https://tls12.xargs.org/)
   - TLS1.2のデータの流れがバイト単位で書いてある。めっちゃ使える。
+- [TLS 1.3 開発日記 その17 AEAD](https://kazu-yamamoto.hatenablog.jp/entry/20170426/1493186127)
+  - TLS1.2のAEADのAADについて書いてある
 - https://wiki.osdev.org/TLS_Handshake
 - [TLS Alert Protocol](https://www.gnutls.org/manual/html_node/The-TLS-Alert-Protocol.html)
 - [TLS nonce　クラウドフレアの記事](https://blog.cloudflare.com/tls-nonce-nse)
