@@ -54,7 +54,7 @@ final class Prf
         }
         // RFC5246 8.1. 6.3. Key Calculation 参照
         $seed = 'key expansion' . $serverRandom. $clientRandom; //key expansionはserver random, client randomの順に繋げる
-        $len = 104; //key blockは48byte固定
+        $len = 104; //key blockは104byte固定
         $hashed = self::pHash($len, $secret, $seed);
         return [
             "ClientMac" => substr($hashed, 0, 20),
