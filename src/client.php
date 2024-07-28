@@ -9,6 +9,7 @@ use PHPTLS\Tls\Client\FinishedMessage;
 use PHPTLS\Tls\Client\MasterSecret;
 use PHPTLS\Tls\Client\ParseServerHello;
 use PHPTLS\Tls\Client\Sequence;
+use PHPTLS\Tls\Connection;
 
 require 'vendor/autoload.php';
 
@@ -17,39 +18,27 @@ if ($argc < 2) {
     exit(1);
 }
 $host = $argv[1];
-$hostIp = gethostbyname($host);
-
 $port = 443;
 
+$Socket = new Connection($host, $port);
+$Socket->connect();
 
-$socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
-if ($socket === false) {
-    echo "Socket creation failed: " . socket_strerror(socket_last_error()) . "\n";
-    exit;
-}
-
-$result = socket_connect($socket, $hostIp, $port);
-if ($result === false) {
-    echo "Socket connect failed: " . socket_strerror(socket_last_error($socket)) . "\n";
-    socket_close($socket);
-    exit;
-}
 
 $ClientHelloObj = new ClientHello();
 $clientHello = $ClientHelloObj->createClientHello();
 
 
 // ソケットに`ClientHello`パケットを送信
-socket_write($socket, $clientHello, strlen($clientHello));
+$Socket->write($clientHello);
 
 // サーバーからの応答を読み取る
-$response = socket_read($socket, 8000);
+$response = $Socket->read();
 
 $recvServerHello = new ParseServerHello($response);
 // データが足りない場合は追加データをreadする
 if (strlen($recvServerHello->serverHelloDone->getTlsPayload()) == 0) {
     echo "server hello done is null\n";
-    $response2 = socket_read($socket, 8000);
+    $response2 = $Socket->read();
     //var_dump(bin2hex($response));
     //var_dump(bin2hex($response2));
     $response = $response . $response2;
@@ -100,13 +89,10 @@ $finishedMessage = $FinishedObj->createHandshakeMessage();
 
 //Client key exchange, Change cipher spec, Finishedのデータを一つにまとめて送信
 $sendData = $clientKeyExchangeData . $changeCipher. $finishedMessage;
-socket_write(
-    $socket,
-    $sendData,
-    strlen($sendData)
-);
 
-$response = socket_read($socket, 16000);
+$Socket->write($sendData);
+
+$response = $Socket->read();
 echo "received server finish: " . bin2hex($response) . PHP_EOL;
 
 
@@ -119,13 +105,9 @@ $sendData = $ApplicationData->encrypt($httpGetReq);
 //echo "request data:\n" . bin2hex($httpGetReq).PHP_EOL;
 //echo "sendData:\n" . bin2hex($sendData).PHP_EOL;
 
-socket_write(
-    $socket,
-    $sendData,
-    strlen($sendData)
-);
+$Socket->write($sendData);
 
-$response = socket_read($socket, 16000);
+$response = $Socket->read();
 
 echo "received GET response: " . bin2hex($response) . PHP_EOL;
 echo "\n\n";
@@ -135,5 +117,5 @@ echo $httpGetReq ;
 var_dump($html);
 
 //echo "decrypt html hex:\n" . bin2hex($html);
-// ソケットを閉じる
-socket_close($socket);
+
+$Socket->close();
