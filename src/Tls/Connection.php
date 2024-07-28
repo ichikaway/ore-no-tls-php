@@ -51,7 +51,32 @@ class Connection
         echo "\nConnected to {$this->host}({$this->ip}):{$this->port}\n\n";
     }
 
+    /**
+     * TLSデータが分割されて受信する場合にも対応したreadメソッド
+     * readの受信サイズ以上のデータの場合は複数回のreadを行う。
+     * TLSレコードが複数のパケットに分割されて受信する場合があるため、TLSレコード長と実際のデータサイズのチェックを行い、
+     * 必要であれば追加でsocket readする
+     *
+     * @return string
+     * @throws \Exception
+     */
     public function read(): string
+    {
+        $dataAll = null;
+        for ($i = 0; $i < 5; $i++) {
+            $dataAll .= $this->readData();
+            if (TlsRecord::isEnoughData($dataAll)) {
+                break;
+            } else {
+                echo "TLS Data is not enough. socket_read again: {$i}\n";
+            }
+        }
+
+        return $dataAll;
+    }
+
+
+    private function readData(): string
     {
         $recvAllData = null;
         $size = 8000;

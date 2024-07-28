@@ -35,6 +35,7 @@ $Socket->write($clientHello);
 $response = $Socket->read();
 
 $recvServerHello = new ParseServerHello($response);
+/*
 // データが足りない場合は追加データをreadする
 if (strlen($recvServerHello->serverHelloDone->getTlsPayload()) == 0) {
     echo "server hello done is null\n";
@@ -44,6 +45,7 @@ if (strlen($recvServerHello->serverHelloDone->getTlsPayload()) == 0) {
     $response = $response . $response2;
     $recvServerHello = new ParseServerHello($response);
 }
+*/
 
 //echo "server hello response all:\n" . bin2hex($response) . PHP_EOL;
 //    echo "serverHello:\n" . bin2hex($recvServerHello->serverHello->getTlsPayload()). PHP_EOL;
