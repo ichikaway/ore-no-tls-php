@@ -46,6 +46,20 @@ socket_write($socket, $clientHello, strlen($clientHello));
 $response = socket_read($socket, 8000);
 
 $recvServerHello = new ParseServerHello($response);
+// データが足りない場合は追加データをreadする
+if (strlen($recvServerHello->serverHelloDone->getTlsPayload()) == 0) {
+    echo "server hello done is null\n";
+    $response2 = socket_read($socket, 8000);
+    //var_dump(bin2hex($response));
+    //var_dump(bin2hex($response2));
+    $response = $response . $response2;
+    $recvServerHello = new ParseServerHello($response);
+}
+
+//echo "server hello response all:\n" . bin2hex($response) . PHP_EOL;
+//    echo "serverHello:\n" . bin2hex($recvServerHello->serverHello->getTlsPayload()). PHP_EOL;
+//    echo "serverCertificate:\n" . bin2hex($recvServerHello->certificate->getTlsPayload()). PHP_EOL;
+//    echo "serverHelloDone:\n" . bin2hex($recvServerHello->serverHelloDone->getTlsPayload()). PHP_EOL;
 
 //$serverCert = $recvServerHello->certificate->getServerPubKeyFromCert();
 //$keyData = openssl_pkey_get_details($serverCert);
