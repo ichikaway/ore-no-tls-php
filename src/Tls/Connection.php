@@ -8,6 +8,7 @@ class Connection
 {
     private Socket $socket;
 
+    private string $host;
     private string $ip;
     private int $port;
 
@@ -18,6 +19,7 @@ class Connection
     {
         $this->ip = gethostbyname($host);
         $this->port = ($port === null) ? 443 : $port;
+        $this->host = $host;
     }
 
     public function connect(): void
@@ -39,11 +41,22 @@ class Connection
             socket_close($socket);
             throw $e;
         }
+        echo "\nConnected to {$this->host}({$this->ip}):{$this->port}\n\n";
     }
 
     public function read(): string
     {
-        return socket_read($this->socket, 8000);
+        $recvAllData = null;
+        $size = 8000;
+        do {
+            if ($recvAllData !== null) {
+                // readのループが回っているか判断できるようにするecho
+                echo "  socket read again. \n";
+            }
+            $recv = socket_read($this->socket, $size);
+            $recvAllData .= $recv;
+        } while (strlen($recv) === $size);
+        return $recvAllData;
     }
 
     public function write(string $data): int
