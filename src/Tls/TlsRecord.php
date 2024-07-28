@@ -24,11 +24,32 @@ class TlsRecord
      */
     public static function isEnoughData(string $data): bool
     {
+        $records = self::getTlsRecords($data);
+        foreach ($records as $record) {
+            $tlsRecordLen = Util::getTlsLengthFromByte($record, self::RecordHeaderOffsetOfContentTypeAndLength);
+            $tlsRecordAllLen = $tlsRecordLen + self::RecordHeaderOffsetOfContentTypeAndTlsVerAndLen;
+            if (strlen($record) !== $tlsRecordAllLen) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 受信データからTLSレコードを抽出して配列で返す
+     * 複数のTLSレコードが含まれている場合にも対応
+     *
+     * @param string $data
+     * @return array<string>
+     * @throws \Exception
+     */
+    public static function getTlsRecords(string $data): array
+    {
         if (strlen($data) === 0) {
             throw new \Exception('TLS data is empty');
         }
         $offset = 0;
-
+        $records = [];
         for ($i = 0; $i < 10; $i++) {
             $tlsRecordLen = Util::getTlsLengthFromByte($data, $offset + self::RecordHeaderOffsetOfContentTypeAndLength);
             $tlsRecordAllLen = $tlsRecordLen + self::RecordHeaderOffsetOfContentTypeAndTlsVerAndLen;
@@ -36,12 +57,9 @@ class TlsRecord
             if (strlen($tlsRecordData) === 0) {
                 break;
             }
-            if (strlen($tlsRecordData) !== $tlsRecordAllLen) {
-                return false;
-            }
+            $records[] = $tlsRecordData;
             $offset = $offset + $tlsRecordAllLen;
         }
-
-        return true;
+        return $records;
     }
 }
