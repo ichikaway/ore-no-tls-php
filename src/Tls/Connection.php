@@ -36,6 +36,13 @@ class Connection
                 //echo "Socket connect failed: " . socket_strerror(socket_last_error($socket)) . "\n";
                 throw new \Exception("Socket connect failed". socket_strerror(socket_last_error($socket)) . "\n");
             }
+
+            // ソケットオプションでタイムアウトを設定
+            socket_set_option($socket, SOL_SOCKET, SO_RCVTIMEO, [
+                'sec' => 5, //5秒でタイムアウト
+                'usec' => 0,
+            ]);
+
             $this->socket = $socket;
         } catch (\Exception $e) {
             socket_close($socket);
