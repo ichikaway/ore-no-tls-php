@@ -2,7 +2,7 @@
     "name": "ichikaway/ore-no-tls-php",
     "description": "ore-no-tls.php",
     "require": {
-        "php": "^8.3",
+        "php": "^8.2",
         "ext-openssl": "*",
         "ext-sockets": "*"
     },
@@ -12,7 +12,8 @@
     },
     "autoload": {
         "psr-4": {
-            "PHPTLS\\": "src/"
+            "PHPTLS\\": "src/",
+            "TCPIPHP\\": "Tcp/src/"
         }
     },
     "autoload-dev": {
