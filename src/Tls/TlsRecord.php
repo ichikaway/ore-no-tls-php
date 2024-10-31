@@ -5,10 +5,10 @@ namespace PHPTLS\Tls;
 class TlsRecord
 {
     //TLSレコードヘッダの先頭からのContentTypeとLengthまでのデータ長
-    private const int RecordHeaderOffsetOfContentTypeAndLength = 3;
+    private const RecordHeaderOffsetOfContentTypeAndLength = 3;
 
     //TLSレコードヘッダの先頭からのContentTypeとLengthとTLSバージョンまでのデータ長
-    private const int RecordHeaderOffsetOfContentTypeAndTlsVerAndLen = self::RecordHeaderOffsetOfContentTypeAndLength + 2;
+    private const RecordHeaderOffsetOfContentTypeAndTlsVerAndLen = self::RecordHeaderOffsetOfContentTypeAndLength + 2;
 
 
     /**

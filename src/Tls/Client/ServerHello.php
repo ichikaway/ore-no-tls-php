@@ -9,10 +9,10 @@ class ServerHello
     use TlsMessageTrait;
 
     //TLSレコードヘッダの先頭からのContentTypeとLengthとTLSバージョンまでのデータ長
-    private const int RecordHeaderOffsetOfContentTypeAndTlsVerAndLen = 5;
+    private const RecordHeaderOffsetOfContentTypeAndTlsVerAndLen = 5;
 
     // TLSレコードヘッダの後にあるペイロードの先頭からハンドシェイクタイプとペイロードの長さ、TLSバージョンまでのデータ長
-    private const int PayloadLengthOfHandshaketypeAndLengthAndVersion = 6;
+    private const PayloadLengthOfHandshaketypeAndLengthAndVersion = 6;
 
     public function __construct(string $data)
     {
