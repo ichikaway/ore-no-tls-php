@@ -3,6 +3,17 @@
 TLS1.2を学習するためにPHPでTLSクライアントを実装する。  
 ClientHelloを送信して、暗号化されたコンテンツを復号し、HTMLを表示するまでがゴール。  
 
+## 構成
+### 通常のTLS
+src/client.php は、カーネルのTCP/IPスタックを利用したTLS1.2の接続を行う。  
+
+### 自作TCP上のTLS
+src/client-ore-tcp.phpは、自作のTCPスタックを利用したTLS1.2の接続を行う。  
+RAWソケットを利用しているため、実行時はLinuxかつRoot権限もしくはNET_RAWのCapabilityが必要。  
+ユーザランドでTCPパケットを送受信するためカーネルが把握していないTCPパケットの受信が必要になる。
+カーネルが把握していないTCPパケットを受信するとRSTを返してしまうため回避策としてiptablesなどで通信相手とのRSTパケットをDropする方法がある。
+
+
 ## 暗号化/ハッシュで利用したPHP関数
 
 - hash_hmac()
