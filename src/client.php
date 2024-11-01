@@ -9,20 +9,18 @@ use PHPTLS\Tls\Client\FinishedMessage;
 use PHPTLS\Tls\Client\MasterSecret;
 use PHPTLS\Tls\Client\ParseServerHello;
 use PHPTLS\Tls\Client\Sequence;
-use PHPTLS\Tls\ConnectionOreNoTcp as Connection;
-
+use PHPTLS\Tls\Connection;
 
 require 'vendor/autoload.php';
 
-if ($argc < 3) {
+if ($argc < 2) {
     fwrite(STDERR, "Error: No argument provided.\n");
     exit(1);
 }
 $host = $argv[1];
 $port = 443;
-$srcIp = $argv[2];
 
-$Socket = new Connection($host, $port, $srcIp);
+$Socket = new Connection($host, $port);
 $Socket->connect();
 
 
