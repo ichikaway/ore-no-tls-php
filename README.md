@@ -59,10 +59,17 @@ RAWソケットを利用しているため、実行時はLinuxかつRoot権限�
 - [TLS 1.3 開発日記 その17 AEAD](https://kazu-yamamoto.hatenablog.jp/entry/20170426/1493186127)
   - TLS1.2のAEADのAADについて書いてある
 - [理解してるつもりの SSL/TLS でも、もっと理解したら面白かった話](https://tkengo.github.io/blog/2015/12/01/https-details/)
+- [TLS通信の内容に迫る Lv2 (1)](https://realizeznsg.hatenablog.com/entry/2018/09/17/110000)
+- [本当は怖いAES-GCMの話](https://jovi0608.hatenablog.com/entry/20160524/1464054882)
+- [Rubyで楽しむソケットプログラミング入門](https://zenn.dev/kuredev/articles/aa26f88cd643de)
 - https://wiki.osdev.org/TLS_Handshake
 - [TLS Alert Protocol](https://www.gnutls.org/manual/html_node/The-TLS-Alert-Protocol.html)
 - [TLS nonce　cloudflareの記事](https://blog.cloudflare.com/tls-nonce-nse)
 - Q&Aサイト
   - [What does the TLS 1.2 client finished message contain?](https://crypto.stackexchange.com/questions/34754/what-does-the-tls-1-2-client-finished-message-contain)
   - [decrypt TLS 1.2 AES-GCM packet](https://stackoverflow.com/questions/28198379/decrypt-tls-1-2-aes-gcm-packet)
-  - 
+- PHPのTLS実装のリポジトリ
+  - [rnaga/PHP-TLS](https://github.com/rnaga/PHP-TLS/tree/master)
+  - [Nall-chan](https://github.com/Nall-chan/Network/tree/master/libs)
+  - [PHP-AES](https://github.com/lt/PHP-AES)
+  - [subtls](https://github.com/jawj/subtls)
