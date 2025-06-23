@@ -72,13 +72,9 @@ class ConnectionOreNoTcp
     }
 
 
-    public function write(string $data): int
+    public function write(string $data): void
     {
-        $result = $this->PhpTcp->write($data);
-        if ($result === false) {
-            throw new \Exception('Socket write failed.' . socket_strerror(socket_last_error($this->socket)));
-        }
-        return $result;
+        $this->PhpTcp->write($data);
     }
 
     public function close(): void
