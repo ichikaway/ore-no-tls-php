@@ -1,7 +1,7 @@
 <?php
 namespace TCPIPHP\Tcp;
 
-class TcpPacket
+class TcpPacket implements PacketInterface
 {
     private string $srcIp;
     private int $srcPort;
@@ -23,7 +23,7 @@ class TcpPacket
         $this->dstPort = $dstPort;
     }
 
-    public function createTcpPacket(int $seqNum, int $ackNum, int $flag, string $data): string
+    public function createPacket(int $seqNum, int $ackNum, int $flag, string $data): string
     {
 
         $tcp_header = pack('n', $this->srcPort);  // 送信元ポート
@@ -51,4 +51,13 @@ class TcpPacket
         return $tcp_header . $data;
     }
 
+    public function send($socket, string $data)
+    {
+        return socket_sendto($socket, $data, strlen($data), 0, $this->dstIp, $this->dstPort);
+    }
+
+    public function recv($socket, string &$buf)
+    {
+        return @socket_recv($socket, $buf, 65535, 0);
+    }
 }

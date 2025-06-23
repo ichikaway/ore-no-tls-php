@@ -16,14 +16,14 @@ class TcpController
 
     private int $finCount = 0;
 
-    private TcpPacket $TcpPacket;
+    private PacketInterface $TcpPacket;
 
     /**
      * @param string $srcIp
      * @param string $dstIp
      * @param int $dstPort
      */
-    public function __construct($socket, string $srcIp, string $dstIp, int $dstPort)
+    public function __construct($socket, string $srcIp, string $dstIp, int $dstPort, bool $withOreIp)
     {
         $this->socket = $socket;
         $this->srcIp = $srcIp;
@@ -33,7 +33,13 @@ class TcpController
         $this->srcPort = rand(60000, 60100);
         $this->seqNum = rand(2000001000, 2000003000);  // シーケンス番号をランダムに設定
 
-        $this->TcpPacket = new TcpPacket($this->srcIp, $this->srcPort, $this->dstIp, $this->dstPort);
+        if ($withOreIp) {
+            echo "自作TCP/IP...\n";
+            $this->TcpPacket = new TcpIpPacket($socket, $this->srcIp, $this->srcPort, $this->dstIp, $this->dstPort);
+        } else {
+            echo "自作TCP...\n";
+            $this->TcpPacket = new TcpPacket($this->srcIp, $this->srcPort, $this->dstIp, $this->dstPort);
+        }
     }
 
     public function close()
@@ -44,36 +50,34 @@ class TcpController
     {
         // syn packet
         $synFlag = TcpUtil::createFlagByte(syn: 1);
-        $packet = $this->TcpPacket->createTcpPacket(seqNum:$this->seqNum, ackNum: 0,flag: $synFlag,data: '');
-        $result = socket_sendto($this->socket, $packet, strlen($packet), 0, $this->dstIp, $this->dstPort);
+        $packet = $this->TcpPacket->createPacket(seqNum:$this->seqNum, ackNum: 0, flag: $synFlag, data: '');
+        $result = $this->TcpPacket->send($this->socket, $packet);
         var_dump($result);
         // パケットの受信
         echo "SYNパケット送信。SYN-ACK待機中...\n";
         $this->receive();
-
     }
 
-    public function send(string $data): false|int
+    public function send(string $data)
     {
         echo "PSH 送信...\n";
         $flag = TcpUtil::createFlagByte(psh: 1, ack: 1);
-        $packet = $this->TcpPacket->createTcpPacket(seqNum:$this->seqNum, ackNum: $this->ackNum, flag: $flag, data: $data);
+        $packet = $this->TcpPacket->createPacket(seqNum:$this->seqNum, ackNum: $this->ackNum, flag: $flag, data: $data);
         var_dump("send packet: " . bin2hex($packet));
-        $result = socket_sendto($this->socket, $packet, strlen($packet), 0, $this->dstIp, $this->dstPort);
+        $result = $this->TcpPacket->send($this->socket, $packet);
         //var_dump($result);
         // パケットの受信
         echo "PSH後の受信...\n";
         $this->receive();
-        return $result;
     }
 
     public function fin()
     {
         echo "FIN/ACK 送信...\n";
         $flag = TcpUtil::createFlagByte(fin: 1, ack: 1);
-        $packet = $this->TcpPacket->createTcpPacket(seqNum:$this->seqNum, ackNum: $this->ackNum, flag: $flag, data: '');
+        $packet = $this->TcpPacket->createPacket(seqNum:$this->seqNum, ackNum: $this->ackNum, flag: $flag, data: '');
         var_dump("send fin/ack packet: " . bin2hex($packet));
-        $result = socket_sendto($this->socket, $packet, strlen($packet), 0, $this->dstIp, $this->dstPort);
+        $result = $this->TcpPacket->send($this->socket, $packet);
         //var_dump($result);
         // パケットの受信
         echo "FIN/ACK後の受信...\n";
@@ -95,12 +99,12 @@ class TcpController
             $port = 0;
 
             // 受信バッファサイズを定義
-            if (@socket_recvfrom($this->socket, $buf, 65535, 0, $from, $port) === false) {
+            if ($this->TcpPacket->recv($this->socket, $buf) === false) {
                 echo "タイムアウト: TCPパケットを受信できませんでした。\n";
                 return $dataBuf;
             }
 
-            var_dump("recvfrom buf: " . bin2hex($buf) . "\n");
+            var_dump("socket_recv buf: " . bin2hex($buf) . "\n");
 
             // 受信データがIPパケットとして正しいか確認
             $ip_header_length = (ord($buf[0]) & 0x0F) * 4;  // IPヘッダーの長さを取得
@@ -119,9 +123,9 @@ class TcpController
             //受信パケットだけ受け付ける
             // 相手からの受信パケットは、こちらから送信したportと逆になっているためそれをチェック
             if ($peerSrcPort !== $this->dstPort  || $peerDstPort !== $this->srcPort) {
-                echo "src/dst port mismatch\n";
-                var_dump("  peerSrcPort: " . $peerSrcPort . ", dst port: " . $this->dstPort);
-                var_dump("  peerDstPort: " . $peerDstPort . ", src port: " . $this->srcPort);
+                //echo "src/dst port mismatch\n";
+                //var_dump("  peerSrcPort: " . $peerSrcPort . ", dst port: " . $this->dstPort);
+                //var_dump("  peerDstPort: " . $peerDstPort . ", src port: " . $this->srcPort);
                 continue;
             }
 
@@ -142,7 +146,7 @@ class TcpController
                 }
 
                 $flag = TcpUtil::createFlagByte(ack: 1);
-                $packet = $this->TcpPacket->createTcpPacket(seqNum:$this->seqNum, ackNum: $this->ackNum,flag: $flag, data: '');
+                $packet = $this->TcpPacket->createPacket(seqNum:$this->seqNum, ackNum: $this->ackNum, flag: $flag, data: '');
                 $result = socket_sendto($this->socket, $packet, strlen($packet), 0, $this->dstIp, $this->dstPort);
                 break;
             }
@@ -174,7 +178,7 @@ class TcpController
                 var_dump("this->ackNum: " . $this->ackNum);
 
                 $flag = TcpUtil::createFlagByte(ack: 1);
-                $packet = $this->TcpPacket->createTcpPacket(seqNum:$this->seqNum, ackNum: $this->ackNum,flag: $flag, data: '');
+                $packet = $this->TcpPacket->createPacket(seqNum:$this->seqNum, ackNum: $this->ackNum, flag: $flag, data: '');
                 $result = socket_sendto($this->socket, $packet, strlen($packet), 0, $this->dstIp, $this->dstPort);
 
                 $this->finCount++;
@@ -204,7 +208,7 @@ class TcpController
                 }
 
                 $flag = TcpUtil::createFlagByte(ack: 1);
-                $packet = $this->TcpPacket->createTcpPacket(seqNum:$this->seqNum, ackNum: $this->ackNum,flag: $flag, data: '');
+                $packet = $this->TcpPacket->createPacket(seqNum:$this->seqNum, ackNum: $this->ackNum, flag: $flag, data: '');
                 $result = socket_sendto($this->socket, $packet, strlen($packet), 0, $this->dstIp, $this->dstPort);
                 $dataBuf .= $data;
                 continue;
@@ -231,7 +235,6 @@ class TcpController
                 var_dump("SeqNum: " . $this->seqNum);
                 break;
             }
-
         }
 
         return null;
