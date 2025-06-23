@@ -28,9 +28,9 @@ class ConnectionOreNoTcp
         $this->srcIp = $srcIp;
     }
 
-    public function connect(): void
+    public function connect(bool $withMyIpPacket = false): void
     {
-        $this->PhpTcp = new PhpTcp($this->srcIp);
+        $this->PhpTcp = new PhpTcp($this->srcIp, $withMyIpPacket);
 
         $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
         try {
